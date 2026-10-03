@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-canvas: #f8f5ee;
+    --bg-surface: rgba(255, 252, 246, 0.78);
+    --bg-surface-hover: rgba(255, 252, 246, 0.95);
+    --border-warm: rgba(168, 134, 102, 0.24);
+    --border-warm-strong: rgba(168, 134, 102, 0.45);
+    --text-ink: #231815;
+    --text-muted: #726050;
+    --text-faint: #9c8a78;
+
+    /* Japanese & Chinese Imperial Palette */
+    --sakura: #ea7a99;
+    --sakura-glow: rgba(234, 122, 153, 0.22);
+    --vermilion: #d33828;
+    --vermilion-glow: rgba(211, 56, 40, 0.25);
+    --gold: #c89532;
+    --gold-glow: rgba(200, 149, 50, 0.25);
+    --bamboo: #3d8050;
+    --bamboo-glow: rgba(61, 128, 80, 0.22);
+    --wisteria: #7d5ea3;
+    --wisteria-glow: rgba(125, 94, 163, 0.25);
+    --indigo: #263c63;
+    --paper: #fbf8f1;
+    --ink: #231815;
+
+    --curtain-color: #9e1f25;
+    --curtain-gold: #d4a743;
+    --glass-shadow: 0 12px 36px -8px rgba(92, 64, 40, 0.12), 0 4px 12px rgba(92, 64, 40, 0.06);
+  }
+
+  .dark {
+    --bg-canvas: #0d0c0b;
+    --bg-surface: rgba(24, 21, 19, 0.78);
+    --bg-surface-hover: rgba(32, 28, 25, 0.92);
+    --border-warm: rgba(225, 195, 155, 0.16);
+    --border-warm-strong: rgba(225, 195, 155, 0.35);
+    --text-ink: #f4efe7;
+    --text-muted: #aba092;
+    --text-faint: #736b61;
+
+    --sakura: #f397b2;
+    --sakura-glow: rgba(243, 151, 178, 0.28);
+    --vermilion: #e84c3b;
+    --vermilion-glow: rgba(232, 76, 59, 0.3);
+    --gold: #e2b248;
+    --gold-glow: rgba(226, 178, 72, 0.3);
+    --bamboo: #54a56a;
+    --bamboo-glow: rgba(84, 165, 106, 0.25);
+    --wisteria: #9e7dc7;
+    --wisteria-glow: rgba(158, 125, 199, 0.28);
+    --indigo: #4869a3;
+    --paper: #1c1917;
+    --ink: #f4efe7;
+
+    --curtain-color: #630f14;
+    --curtain-gold: #c99836;
+    --glass-shadow: 0 16px 42px -10px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@theme {
+  --font-display: "Syne", sans-serif;
+  --font-sans: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", monospace;
+
+  --color-canvas: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-surface-hover: var(--bg-surface-hover);
+  --color-border-warm: var(--border-warm);
+  --color-border-warm-strong: var(--border-warm-strong);
+  --color-ink: var(--text-ink);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+
+  --color-sakura: var(--sakura);
+  --color-vermilion: var(--vermilion);
+  --color-gold: var(--gold);
+  --color-bamboo: var(--bamboo);
+  --color-wisteria: var(--wisteria);
+  --color-indigo: var(--indigo);
+  --color-paper: var(--paper);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--text-ink);
+  min-height: 100vh;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism panel helper */
+.glass-panel {
+  background-color: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-warm);
+  box-shadow: var(--glass-shadow);
+  border-radius: 1rem;
+}
+
+.glass-panel-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-warm-strong);
+  transform: translateY(-2px);
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
