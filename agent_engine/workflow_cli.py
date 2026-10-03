@@ -29,6 +29,7 @@ import agent_engine.tools.computer_tools  # noqa: F401
 import agent_engine.tools.secrets_tools  # noqa: F401
 import agent_engine.tools.deploy_tools  # noqa: F401
 import agent_engine.tools.seo_tools  # noqa: F401
+import agent_engine.tools.preview_tools  # noqa: F401
 
 
 def build_registry() -> ModelRegistry:

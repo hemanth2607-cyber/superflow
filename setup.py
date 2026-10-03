@@ -18,6 +18,7 @@ setup(
             "superflow=agent_engine.cli:main",
             "superflow-workflow=agent_engine.workflow_cli:main",
             "superflow-setup=agent_engine.installer.setup_wizard:run_setup_wizard",
+            "superflow-live=agent_engine.preview.live_server:main",
         ]
     },
 )
