@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# SuperFlow artifacts & encrypted vaults
+artifacts/
+*.enc
+*.salt
+*.tmp
+agent_audit.jsonl
+workspace/
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.swp
