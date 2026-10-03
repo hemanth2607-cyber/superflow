@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
 const BACKGROUND_IMAGES = [
+  '/assets/shadow/both_puppets_theatre.jpg',
+  '/assets/shadow/shadow_cherry_blossom.jpg',
+  '/assets/shadow/shadow_bamboo_grove.jpg',
   '/assets/bg/Sunlit Cherry Blossom Canopy.png',
   '/assets/bg/c9aee81b-2c6c-41f1-971e-a3dacb333e79.png',
   '/assets/bg/1ffcf119-74a3-4ebe-898f-87e9b2e9912c.png',
-  '/assets/bg/48da6794-10b3-4c52-a989-be26859270ae.png',
 ]
 
 interface Petal {
