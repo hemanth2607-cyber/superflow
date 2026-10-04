@@ -1,11 +1,9 @@
 import React from 'react'
 import { Icon } from './Icon'
-import { useThemeStore } from '../../stores/useThemeStore'
 import { useAudioStore } from '../../stores/useAudioStore'
 import { useFlowStore } from '../../stores/useFlowStore'
 
 export const StageHeader: React.FC = () => {
-  const { theme, toggleTheme } = useThemeStore()
   const { isMuted, toggleAudio, playClick } = useAudioStore()
   const { stage, setStage } = useFlowStore()
 
@@ -80,19 +78,6 @@ export const StageHeader: React.FC = () => {
           }`}
         >
           <Icon name={isMuted ? 'volume-x' : 'volume'} size={18} />
-        </button>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={() => {
-            playClick()
-            toggleTheme()
-          }}
-          aria-label={theme === 'dark' ? 'Switch to Washi light paper' : 'Switch to Lacquer dark'}
-          title={theme === 'dark' ? 'Theme: Lacquer Dark (Click for Washi Light)' : 'Theme: Washi Light (Click for Lacquer Dark)'}
-          className="p-2 rounded-lg border border-border-warm bg-surface hover:bg-surface-hover text-muted hover:text-ink transition-all duration-300"
-        >
-          <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
         </button>
       </div>
     </header>
