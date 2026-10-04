@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { ArticulatedCutoutPuppet } from './ArticulatedCutoutPuppet'
 import { useFlowStore } from '../../stores/useFlowStore'
-import { usePuppetStore } from '../../stores/usePuppetStore'
 
 export const PuppetStage: React.FC = () => {
   const { stage } = useFlowStore()
-  const { setHoveredType } = usePuppetStore()
   const [viewMode, setViewMode] = useState<'both' | 'chinese' | 'japanese'>('both')
 
   const isWorkshop = stage === 'workshop'
@@ -63,15 +61,13 @@ export const PuppetStage: React.FC = () => {
         {/* Left / Center Puppet: Chinese Opera Shadow Puppet (Attached Image) */}
         {(viewMode === 'both' || viewMode === 'chinese') && (
           <div
-            className={`pointer-events-auto transition-all duration-500 flex flex-col items-center ${
+            className={`transition-all duration-500 flex flex-col items-center ${
               viewMode === 'chinese'
                 ? 'w-72 md:w-80 mx-auto'
                 : isWorkshop
                 ? 'w-36 md:w-44 -mr-4'
                 : 'w-56 md:w-64 mx-4'
             }`}
-            onMouseEnter={() => setHoveredType('website')}
-            onMouseLeave={() => setHoveredType(null)}
           >
             <ArticulatedCutoutPuppet type="chinese" />
           </div>
@@ -90,15 +86,13 @@ export const PuppetStage: React.FC = () => {
         {/* Right / Center Puppet: Japanese Bunraku Shadow Puppet */}
         {(viewMode === 'both' || viewMode === 'japanese') && (
           <div
-            className={`pointer-events-auto transition-all duration-500 flex flex-col items-center ${
+            className={`transition-all duration-500 flex flex-col items-center ${
               viewMode === 'japanese'
                 ? 'w-72 md:w-80 mx-auto'
                 : isWorkshop
                 ? 'w-36 md:w-44 -ml-4'
                 : 'w-56 md:w-64 mx-4'
             }`}
-            onMouseEnter={() => setHoveredType('webapp')}
-            onMouseLeave={() => setHoveredType(null)}
           >
             <ArticulatedCutoutPuppet type="japanese" />
           </div>
