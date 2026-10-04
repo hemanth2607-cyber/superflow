@@ -40,13 +40,13 @@ export const WorkshopView: React.FC = () => {
           <div className="text-center md:text-left">
             <span className="text-xs uppercase tracking-wider text-muted font-sans flex items-center gap-1.5 justify-center md:justify-start mb-1">
               <Icon name="sparkles" size={14} className="text-gold" />
-              <span>Workshop Loom</span>
+              <span>Build Workspace</span>
             </span>
             <h2 className="font-display font-extrabold text-2xl text-ink capitalize">
-              {projectName || 'Unnamed Sanctuary'}
+              {projectName || 'Unnamed Project'}
             </h2>
             <p className="text-xs text-muted font-sans mt-0.5">
-              Archetype: <span className="text-gold font-medium capitalize">{projectType}</span> • Woven with silk threads
+              Type: <span className="text-gold font-medium capitalize">{projectType}</span> • Generating project files
             </p>
           </div>
 
@@ -145,7 +145,7 @@ export const WorkshopView: React.FC = () => {
           }}
           className="text-xs text-muted hover:text-ink px-3 py-1.5"
         >
-          ← Return to Casting
+          ← Return to Configuration
         </button>
 
         {/* The Live preview button appears ONLY when isLivePreviewReady === true */}
@@ -158,7 +158,7 @@ export const WorkshopView: React.FC = () => {
               className="px-8 py-3.5 rounded-full bg-gradient-to-r from-bamboo to-[#4ba165] hover:brightness-110 text-white font-display font-bold text-sm shadow-xl shadow-bamboo/25 flex items-center gap-2 transition-all transform hover:scale-105"
             >
               <Icon name="sparkles" size={18} />
-              <span>Enter Live Premiere</span>
+              <span>Open Live Preview</span>
               <Icon name="arrow-right" size={16} />
             </button>
           </div>

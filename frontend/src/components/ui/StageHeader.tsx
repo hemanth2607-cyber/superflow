@@ -10,15 +10,15 @@ export const StageHeader: React.FC = () => {
   const { stage, setStage } = useFlowStore()
 
   const stages = [
-    { key: 'overture', label: 'Overture' },
-    { key: 'casting', label: 'Casting' },
-    { key: 'workshop', label: 'Workshop' },
-    { key: 'premiere', label: 'Premiere' },
+    { key: 'overture', label: 'Get Started' },
+    { key: 'casting', label: 'Configure' },
+    { key: 'workshop', label: 'Build' },
+    { key: 'premiere', label: 'Preview' },
   ] as const
 
   return (
     <header className="relative z-30 flex items-center justify-between px-6 py-4 border-b border-border-warm bg-surface/60 backdrop-blur-md transition-colors duration-500">
-      {/* Brand & Metaphor Logo */}
+      {/* Brand Logo */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => {
@@ -26,9 +26,8 @@ export const StageHeader: React.FC = () => {
             setStage('overture')
           }}
           className="group flex items-center gap-2.5 text-left focus:outline-none"
-          title="Return to Overture"
+          title="Return to Start"
         >
-          {/* Silk thread icon */}
           <div className="relative w-8 h-8 rounded-full border border-gold/40 flex items-center justify-center bg-gold/10 group-hover:border-gold transition-colors">
             <Icon name="clone" size={18} className="text-gold group-hover:scale-110 transition-transform" />
           </div>
@@ -37,7 +36,7 @@ export const StageHeader: React.FC = () => {
               SuperFlow
             </span>
             <span className="hidden sm:inline-block ml-2 text-xs text-muted font-sans border-l border-border-warm pl-2">
-              Marionette Theatre
+              Project Starter
             </span>
           </div>
         </button>

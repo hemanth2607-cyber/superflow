@@ -50,13 +50,13 @@ export const OvertureView: React.FC = () => {
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/30 text-gold text-xs font-sans mb-3">
           <Icon name="sparkles" size={14} />
-          <span>Hand-Crafted Marionette Starter</span>
+          <span>Intelligent Project Starter</span>
         </div>
         <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight text-ink mb-3">
-          Pull a thread, grow something.
+          Build faster, build beautifully.
         </h1>
         <p className="text-muted text-base sm:text-lg max-w-xl mx-auto font-sans">
-          Step onto the stage. Choose how to begin your project, then guide the marionettes to craft it into life.
+          Choose how to begin your project. Select an existing workspace, create a fresh project, or clone a repository.
         </p>
       </div>
 
@@ -81,7 +81,7 @@ export const OvertureView: React.FC = () => {
               Open folder
             </h2>
             <p className="text-xs text-muted leading-relaxed">
-              Select an existing workspace on your machine or inscribe a new directory.
+              Select an existing project workspace or create a new directory on your machine.
             </p>
           </div>
         </button>
@@ -91,7 +91,6 @@ export const OvertureView: React.FC = () => {
           onClick={handleStartNew}
           className="glass-panel glass-panel-hover p-6 text-left flex flex-col justify-between h-48 focus:outline-none focus:ring-2 focus:ring-sakura/50 border-sakura/30 group relative overflow-hidden"
         >
-          {/* Subtle floral watermark */}
           <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
             <Icon name="website" size={120} />
           </div>
@@ -106,7 +105,7 @@ export const OvertureView: React.FC = () => {
               New project
             </h2>
             <p className="text-xs text-muted leading-relaxed">
-              Begin from clean washi parchment with an artisanal seasonal archetype.
+              Start with a clean modern template tailored to your application requirements.
             </p>
           </div>
         </button>
@@ -130,7 +129,7 @@ export const OvertureView: React.FC = () => {
               Clone repository
             </h2>
             <p className="text-xs text-muted leading-relaxed">
-              Tie a crimson silk thread to any Git repository and pull it into the theatre.
+              Import an existing project from GitHub, GitLab, or any remote Git URL.
             </p>
           </div>
         </button>

@@ -131,7 +131,7 @@ export const CastingView: React.FC = () => {
           What are you building?
         </h2>
         <p className="text-muted text-sm max-w-md mx-auto">
-          Select an archetype flower. Watch the marionettes acknowledge your vision.
+          Select your application archetype and aesthetic color palette.
         </p>
       </div>
 
@@ -169,7 +169,7 @@ export const CastingView: React.FC = () => {
                 )}
               </div>
 
-              {/* Label & Flower Metaphor */}
+              {/* Label */}
               <div className="font-display font-bold text-sm text-ink mb-0.5">{opt.label}</div>
               <div className="text-[11px] text-gold font-sans mb-1.5 opacity-90">{opt.flower}</div>
               <div className="text-[11px] text-muted line-clamp-2 leading-relaxed">{opt.subtext}</div>
@@ -178,13 +178,13 @@ export const CastingView: React.FC = () => {
         })}
       </div>
 
-      {/* Feel Selector & Description Input */}
+      {/* Palette Selector & Description Input */}
       <div className="glass-panel p-6 mb-8 border-border-warm">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-          {/* Feel Selector */}
+          {/* Palette Selector */}
           <div>
             <label className="block text-xs font-sans uppercase tracking-wider text-muted mb-2">
-              Atmospheric Feel
+              Color Palette
             </label>
             <div className="grid grid-cols-2 gap-2">
               {FEEL_OPTIONS.map((f) => {
@@ -210,23 +210,23 @@ export const CastingView: React.FC = () => {
             </div>
           </div>
 
-          {/* One-Line Description */}
+          {/* Project Description */}
           <div className="md:col-span-2">
             <label className="block text-xs font-sans uppercase tracking-wider text-muted mb-2">
-              One-Line Vision
+              Project Description
             </label>
             <input
               type="text"
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
-              placeholder="e.g. A serene Japanese tea ceremony timer with gentle rain audio."
+              placeholder="e.g. A high-performance productivity dashboard with clean analytics."
               className="w-full px-4 py-2.5 text-sm rounded-lg border border-border-warm bg-surface text-ink focus:outline-none focus:border-gold transition-colors"
             />
           </div>
         </div>
       </div>
 
-      {/* Action: Cast the Production (Begin Workshop) */}
+      {/* Action: Start Build */}
       <div className="flex justify-between items-center">
         <button
           onClick={() => {
@@ -235,14 +235,14 @@ export const CastingView: React.FC = () => {
           }}
           className="text-xs text-muted hover:text-ink px-4 py-2"
         >
-          ← Return to Overture
+          ← Return to Start
         </button>
 
         <button
           onClick={handleStartWorkshop}
           className="px-6 py-3 rounded-full bg-gold hover:bg-gold/90 text-white font-display font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 group"
         >
-          <span>Weave Project Threads</span>
+          <span>Build Project</span>
           <Icon name="arrow-right" size={16} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </div>

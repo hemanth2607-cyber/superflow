@@ -93,11 +93,11 @@ export const AIThinkingOrbAndInput: React.FC<ThinkingOrbProps> = ({ className = 
           {label}
         </div>
         <div className="text-xs text-muted font-sans mt-0.5">
-          {phase === 'thinking' && 'Contemplating architecture & seasonal motifs...'}
-          {phase === 'gathering' && 'Collecting hand-selected files & dependencies...'}
-          {phase === 'weaving' && 'Binding silk threads and assembling layout components...'}
-          {phase === 'pruning' && 'Refining aesthetic balance and perfecting typography...'}
-          {phase === 'done' && 'The production is fully built and ready for the stage.'}
+          {phase === 'thinking' && 'Analyzing project requirements and architecture...'}
+          {phase === 'gathering' && 'Assembling project templates and dependencies...'}
+          {phase === 'weaving' && 'Generating application components and layouts...'}
+          {phase === 'pruning' && 'Refining styles, tokens, and code structure...'}
+          {phase === 'done' && 'Project files generated successfully.'}
         </div>
       </div>
     </div>

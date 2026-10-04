@@ -39,13 +39,13 @@ export const PremiereView: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-bamboo/15 text-bamboo text-xs font-sans font-semibold mb-1">
             <Icon name="check" size={12} />
-            <span>Curtain Up • Live Premiere</span>
+            <span>Live Preview</span>
           </div>
           <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-ink capitalize">
             {projectName}
           </h2>
           <p className="text-xs text-muted font-sans">
-            Crafted with <span className="capitalize text-gold font-medium">{projectFeel}</span> ambiance • Interactive execution
+            Color palette: <span className="capitalize text-gold font-medium">{projectFeel}</span> • Interactive Preview
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export const PremiereView: React.FC = () => {
             className="px-4 py-2 rounded-lg border border-border-warm bg-surface hover:bg-surface-hover text-xs text-muted hover:text-ink transition-colors flex items-center gap-1.5"
           >
             <Icon name="refresh" size={14} />
-            <span>New Production</span>
+            <span>Start New Project</span>
           </button>
         </div>
       </div>
@@ -97,7 +97,7 @@ export const PremiereView: React.FC = () => {
                 <span className="w-3 h-3 rounded-full bg-bamboo/80" />
               </div>
               <div className="px-6 py-1 rounded-full bg-canvas/80 border border-border-warm text-[11px] font-mono text-muted flex items-center gap-2">
-                <span>https://superflow.theatre/{projectName.toLowerCase().replace(/\s+/g, '-')}</span>
+                <span>https://superflow.app/{projectName.toLowerCase().replace(/\s+/g, '-')}</span>
               </div>
               <div className="w-12" />
             </div>
@@ -204,7 +204,7 @@ export const PremiereView: React.FC = () => {
               {/* Bottom Footer Note */}
               <div className="pt-6 border-t border-border-warm/60 flex items-center justify-between text-[11px] text-muted font-sans">
                 <span>SuperFlow Project Starter • Live Preview</span>
-                <span>Crafted in the marionette theatre</span>
+                <span>Powered by SuperFlow</span>
               </div>
             </div>
           </div>
@@ -220,14 +220,14 @@ export const PremiereView: React.FC = () => {
             <div className="flex-1 p-5 flex flex-col justify-between overflow-y-auto">
               <div>
                 <div className="text-center mt-2 mb-6">
-                  <div className="text-xs text-gold uppercase tracking-widest font-sans">Tea Companion</div>
+                  <div className="text-xs text-gold uppercase tracking-widest font-sans">Application Preview</div>
                   <h3 className="font-display font-bold text-xl text-ink mt-0.5">{projectName}</h3>
                 </div>
 
                 {/* Zen Tea Timer Circle */}
                 <div className="w-40 h-40 mx-auto rounded-full border-4 border-gold/40 flex flex-col items-center justify-center bg-gold/5 mb-6">
                   <div className="text-3xl font-mono font-bold text-ink">{formatTimer(teaTimer)}</div>
-                  <div className="text-[10px] text-muted uppercase tracking-wider mt-1">Steep Time</div>
+                  <div className="text-[10px] text-muted uppercase tracking-wider mt-1">Countdown Timer</div>
                 </div>
 
                 <div className="flex justify-center gap-2 mb-4">
@@ -238,7 +238,7 @@ export const PremiereView: React.FC = () => {
                     }}
                     className="px-5 py-2 rounded-full bg-gold text-white font-sans text-xs font-bold shadow-md hover:bg-gold/90 transition-colors"
                   >
-                    {isTimerRunning ? 'Pause' : 'Start Steep'}
+                    {isTimerRunning ? 'Pause' : 'Start'}
                   </button>
                   <button
                     onClick={() => {
@@ -255,8 +255,8 @@ export const PremiereView: React.FC = () => {
 
               {/* Mobile bottom nav */}
               <div className="p-3 rounded-2xl bg-surface border border-border-warm flex items-center justify-around text-xs text-muted">
-                <span className="text-gold font-bold">Timer</span>
-                <span>Garden</span>
+                <span className="text-gold font-bold">Home</span>
+                <span>Analytics</span>
                 <span>Settings</span>
               </div>
             </div>
@@ -273,7 +273,7 @@ export const PremiereView: React.FC = () => {
           onClick={() => setStage('workshop')}
           className="text-xs text-muted hover:text-ink underline underline-offset-4"
         >
-          ← Return to Workshop Loom
+          ← Return to Build Workspace
         </button>
       </div>
     </div>

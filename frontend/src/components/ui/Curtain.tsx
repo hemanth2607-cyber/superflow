@@ -47,7 +47,7 @@ export const Curtain: React.FC<CurtainProps> = ({ isOpen }) => {
         }}
       >
         <div className="text-gold/80 font-display text-sm tracking-widest uppercase">
-          ✦ SuperFlow Marionette Theatre ✦
+          ✦ SuperFlow Project Starter ✦
         </div>
       </div>
     </div>

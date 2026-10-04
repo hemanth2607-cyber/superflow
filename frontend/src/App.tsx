@@ -47,9 +47,9 @@ export const App: React.FC = () => {
         {stage === 'premiere' && <PremiereView />}
       </main>
 
-      {/* 6. Subtle Ground Footer */}
+      {/* 6. Ground Footer */}
       <footer className="relative z-20 py-4 text-center text-xs text-muted/70 font-sans border-t border-border-warm/40">
-        <span>SuperFlow Marionette Theatre • Handcrafted Artisanal Software Experience</span>
+        <span>SuperFlow • Intelligent Guided Project Starter</span>
       </footer>
     </div>
   )
