@@ -6,6 +6,25 @@ interface ArticulatedCutoutPuppetProps {
   className?: string
 }
 
+// Exact 2D forward-kinematics rotation around a pivot point (100% mathematically matches CSS rotation)
+function rotatePoint(
+  x: number,
+  y: number,
+  pivotX: number,
+  pivotY: number,
+  deg: number
+): { x: number; y: number } {
+  const rad = (deg * Math.PI) / 180
+  const cos = Math.cos(rad)
+  const sin = Math.sin(rad)
+  const dx = x - pivotX
+  const dy = y - pivotY
+  return {
+    x: pivotX + dx * cos - dy * sin,
+    y: pivotY + dx * sin + dy * cos,
+  }
+}
+
 export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = ({
   type,
   className = '',
@@ -59,27 +78,27 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
       const elapsed = (now - startTime) / 1000 // seconds
       const gestureBoost = isGesturing ? 2.2 : 1.0
 
-      // 1. Head: independent nod and tilt rhythm
-      const head = (Math.sin(elapsed * 0.95) * 1.8 + Math.cos(elapsed * 1.45) * 0.8) * gestureBoost
+      // 1. Head: independent gentle nod and tilt
+      const head = (Math.sin(elapsed * 0.9) * 1.8 + Math.cos(elapsed * 1.4) * 0.7) * gestureBoost
 
-      // 2. Left Arm: independent shoulder rotation and limb swing
-      const leftArm = (Math.sin(elapsed * 1.15 + 0.5) * 2.4 + Math.cos(elapsed * 0.6) * 1.0) * gestureBoost
+      // 2. Left Arm: independent shoulder articulation & weapon/sleeve motion
+      const leftArm = (Math.sin(elapsed * 1.1 + 0.5) * 2.5 + Math.cos(elapsed * 0.6) * 0.8) * gestureBoost
 
-      // 3. Right Arm: independent shoulder articulation & weapon/fan swing
-      const rightArm = (Math.sin(elapsed * 1.05 + 1.8) * 2.6 - Math.cos(elapsed * 0.7) * 0.8) * gestureBoost
+      // 3. Right Arm: independent shoulder articulation & shield/fan motion
+      const rightArm = (Math.sin(elapsed * 1.0 + 1.8) * 2.6 - Math.cos(elapsed * 0.7) * 0.7) * gestureBoost
 
-      // 4. Torso: subtle core breathing rise/fall and organic spinal posture
-      const torsoTilt = (Math.sin(elapsed * 0.75) * 0.9) * gestureBoost
-      const torsoY = Math.sin(elapsed * 0.8) * 1.4
+      // 4. Torso: subtle core breathing rise/fall and gentle tilt
+      const torsoTilt = (Math.sin(elapsed * 0.75) * 0.8) * gestureBoost
+      const torsoY = Math.sin(elapsed * 0.8) * 1.2
 
-      // 5. Skirt / Robe: pendular inertia lagging slightly behind torso
-      const skirt = (Math.sin(elapsed * 0.7 + 2.1) * 1.7) * gestureBoost
+      // 5. Skirt / Robe: pendular inertia lagging behind torso
+      const skirt = (Math.sin(elapsed * 0.7 + 2.1) * 1.6) * gestureBoost
 
       // 6. Legs / Feet: subtle independent counter-balance articulation
-      const legs = (Math.sin(elapsed * 0.85 + 3.2) * 1.4) * gestureBoost
+      const legs = (Math.sin(elapsed * 0.85 + 3.2) * 1.3) * gestureBoost
 
       // 7. Overall gentle marionette string suspension sway
-      const sway = Math.sin(elapsed * 0.55) * 0.7
+      const sway = Math.sin(elapsed * 0.55) * 0.6
 
       setAngles({
         head,
@@ -110,36 +129,55 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
         skirtSrc: '/assets/shadow/part_skirt.png',
         legsSrc: '/assets/shadow/part_legs.png',
         pivots: {
-          head: '51.3% 28.8%',
-          leftArm: '43.0% 32.9%',
-          rightArm: '59.7% 32.9%',
-          torso: '51.3% 38.3%',
-          skirt: '51.3% 45.4%',
-          legs: '51.3% 64.2%',
+          head: { x: 50.8, y: 30.0 },
+          leftArm: { x: 42.4, y: 30.0 },
+          rightArm: { x: 59.2, y: 30.0 },
+          torso: { x: 50.8, y: 40.0 },
+          skirt: { x: 50.8, y: 51.7 },
+          legs: { x: 50.8, y: 69.2 },
         },
-        // Overhead suspension threads attached to moving limb endpoints
+        // Overhead suspension threads: Attached above crown and to arms, NEVER crossing face
         threads: [
-          { id: 'head', barX: 51, barY: 3.5, targetX: 51.3, targetY: 3.0, part: 'head' },
-          { id: 'leftArm', barX: 25, barY: 3.5, targetX: 23.5, targetY: 38.0, part: 'leftArm' },
-          { id: 'rightArm', barX: 75, barY: 3.5, targetX: 75.0, targetY: 38.0, part: 'rightArm' },
-          { id: 'waist', barX: 45, barY: 3.5, targetX: 47.0, targetY: 46.0, part: 'torso' },
-          { id: 'skirt', barX: 58, barY: 3.5, targetX: 57.0, targetY: 65.0, part: 'skirt' },
-        ],
-        // Brass rivets and sewn joint hinges
-        rivets: [
-          { x: 51.3, y: 28.8, label: 'Neck Pivot' },
-          { x: 43.0, y: 32.9, label: 'Left Shoulder' },
-          { x: 59.7, y: 32.9, label: 'Right Shoulder' },
-          { x: 51.3, y: 45.4, label: 'Waist Hinge' },
-          { x: 51.3, y: 64.2, label: 'Knee Joint' },
-        ],
-        // Stitches connecting the puppet body parts
-        stitches: [
-          { x1: 49.5, y1: 28.8, x2: 53.1, y2: 28.8 },
-          { x1: 41.5, y1: 32.9, x2: 44.5, y2: 32.9 },
-          { x1: 58.2, y1: 32.9, x2: 61.2, y2: 32.9 },
-          { x1: 48.0, y1: 45.4, x2: 54.6, y2: 45.4 },
-          { x1: 48.0, y1: 64.2, x2: 54.6, y2: 64.2 },
+          // Head thread attaches to top center crown pompom (y=10.0%), well above face
+          {
+            id: 'head',
+            barX: 50.8,
+            barY: 3.0,
+            attachX: 50.8,
+            attachY: 10.0,
+            pivot: { x: 50.8, y: 30.0 },
+            angleKey: 'head' as const,
+          },
+          // Left arm thread attaches to spear shaft near hand
+          {
+            id: 'leftArm',
+            barX: 25.0,
+            barY: 3.0,
+            attachX: 30.1,
+            attachY: 46.7,
+            pivot: { x: 42.4, y: 30.0 },
+            angleKey: 'leftArm' as const,
+          },
+          // Right arm thread attaches to top of tiger shield
+          {
+            id: 'rightArm',
+            barX: 76.0,
+            barY: 3.0,
+            attachX: 76.0,
+            attachY: 35.0,
+            pivot: { x: 59.2, y: 30.0 },
+            angleKey: 'rightArm' as const,
+          },
+          // Torso thread attaches to shoulder cross-beam
+          {
+            id: 'torso',
+            barX: 45.0,
+            barY: 3.0,
+            attachX: 45.0,
+            attachY: 22.0,
+            pivot: { x: 50.8, y: 40.0 },
+            angleKey: 'torsoTilt' as const,
+          },
         ],
       }
     : {
@@ -151,33 +189,54 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
         skirtSrc: '/assets/shadow/jp_part_skirt.png',
         legsSrc: '/assets/shadow/jp_part_feet.png',
         pivots: {
-          head: '50.0% 21.3%',
-          rightArm: '40.2% 22.9%',
-          leftArm: '59.2% 22.9%',
-          torso: '50.0% 31.7%',
-          skirt: '50.0% 43.3%',
-          legs: '50.8% 73.3%',
+          head: { x: 50.0, y: 21.3 },
+          rightArm: { x: 40.2, y: 22.9 },
+          leftArm: { x: 59.2, y: 22.9 },
+          torso: { x: 50.0, y: 31.7 },
+          skirt: { x: 50.0, y: 43.3 },
+          legs: { x: 50.8, y: 73.3 },
         },
         threads: [
-          { id: 'head', barX: 50, barY: 3.5, targetX: 50.0, targetY: 4.5, part: 'head' },
-          { id: 'rightArm', barX: 25, barY: 3.5, targetX: 22.5, targetY: 44.0, part: 'rightArm' },
-          { id: 'leftArm', barX: 75, barY: 3.5, targetX: 74.5, targetY: 28.0, part: 'leftArm' },
-          { id: 'waist', barX: 44, barY: 3.5, targetX: 45.0, targetY: 36.0, part: 'torso' },
-          { id: 'skirt', barX: 58, barY: 3.5, targetX: 56.0, targetY: 70.0, part: 'skirt' },
-        ],
-        rivets: [
-          { x: 50.0, y: 21.3, label: 'Neck Pivot' },
-          { x: 40.2, y: 22.9, label: 'Right Shoulder' },
-          { x: 59.2, y: 22.9, label: 'Left Shoulder' },
-          { x: 50.0, y: 43.3, label: 'Waist Hinge' },
-          { x: 50.8, y: 73.3, label: 'Hem Joint' },
-        ],
-        stitches: [
-          { x1: 48.0, y1: 21.3, x2: 52.0, y2: 21.3 },
-          { x1: 38.5, y1: 22.9, x2: 42.0, y2: 22.9 },
-          { x1: 57.5, y1: 22.9, x2: 61.0, y2: 22.9 },
-          { x1: 47.0, y1: 43.3, x2: 53.0, y2: 43.3 },
-          { x1: 47.5, y1: 73.3, x2: 54.0, y2: 73.3 },
+          // Head thread attaches to top hair ornament (y=5.4%), well above face
+          {
+            id: 'head',
+            barX: 50.0,
+            barY: 3.0,
+            attachX: 50.0,
+            attachY: 5.4,
+            pivot: { x: 50.0, y: 21.3 },
+            angleKey: 'head' as const,
+          },
+          // Right arm thread attaches to the gold fan edge
+          {
+            id: 'rightArm',
+            barX: 24.0,
+            barY: 3.0,
+            attachX: 23.0,
+            attachY: 42.0,
+            pivot: { x: 40.2, y: 22.9 },
+            angleKey: 'rightArm' as const,
+          },
+          // Left arm thread attaches to raised silk cloth
+          {
+            id: 'leftArm',
+            barX: 76.0,
+            barY: 3.0,
+            attachX: 77.0,
+            attachY: 26.0,
+            pivot: { x: 59.2, y: 22.9 },
+            angleKey: 'leftArm' as const,
+          },
+          // Torso thread attaches to shoulder collar
+          {
+            id: 'torso',
+            barX: 44.0,
+            barY: 3.0,
+            attachX: 44.0,
+            attachY: 20.0,
+            pivot: { x: 50.0, y: 31.7 },
+            angleKey: 'torsoTilt' as const,
+          },
         ],
       }
 
@@ -187,12 +246,13 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
       className={`relative w-full h-[320px] md:h-[370px] select-none pointer-events-none flex flex-col items-center justify-center filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.55)] ${className}`}
       style={{
         transform: `rotate(${angles.sway}deg) translateY(${angles.torsoY}px)`,
-        transformOrigin: '50% 3.5%',
+        transformOrigin: '50% 3.0%',
         transition: 'transform 0.15s ease-out',
       }}
     >
       {/* ==============================================================
-          1. OVERHEAD SILK THREADS, CONTROL BAR, STITCHES & BRASS RIVETS
+          1. OVERHEAD MARIONETTE WOODEN CROSSBAR & PURE SILK THREADS
+             (NO DOTS/RIVETS COVERING THE FACE OR HANDS)
           ============================================================== */}
       <div className="absolute inset-0 pointer-events-none z-30">
         <svg
@@ -201,128 +261,77 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           className="w-full h-full overflow-visible"
         >
           <defs>
-            {/* Silk Thread Golden Glow Filter */}
+            {/* Luminous Silk Thread Glow */}
             <filter id={`threadGlow-${type}`} x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="0.4" floodColor="#d4af37" floodOpacity="0.75" />
+              <feDropShadow dx="0" dy="0" stdDeviation="0.3" floodColor="#e6ca75" floodOpacity="0.75" />
             </filter>
-            {/* Marionette Wooden Bar Gradient */}
+            {/* Marionette Hardwood Control Bar Gradient */}
             <linearGradient id={`woodBar-${type}`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#3c2612" />
-              <stop offset="15%" stopColor="#6e4d26" />
-              <stop offset="50%" stopColor="#8c6233" />
-              <stop offset="85%" stopColor="#6e4d26" />
-              <stop offset="100%" stopColor="#3c2612" />
+              <stop offset="0%" stopColor="#2c1a0c" />
+              <stop offset="15%" stopColor="#5e4120" />
+              <stop offset="50%" stopColor="#805629" />
+              <stop offset="85%" stopColor="#5e4120" />
+              <stop offset="100%" stopColor="#2c1a0c" />
             </linearGradient>
           </defs>
 
           {/* Overhead Marionette Control Crossbar */}
           <g id="overhead-control-bar">
-            {/* Top Suspension Hook */}
-            <circle cx="50" cy="1.2" r="1.3" fill="none" stroke="#d4af37" strokeWidth="0.5" />
-            {/* Horizontal Hardwood Bar */}
+            {/* Center Suspension Ring */}
+            <circle cx="50" cy="1.2" r="1.2" fill="none" stroke="#d4af37" strokeWidth="0.4" />
+            {/* Main Hardwood Bar */}
             <rect
               x="16"
-              y="2.6"
+              y="2.4"
               width="68"
-              height="2.2"
-              rx="1.1"
+              height="2.0"
+              rx="1.0"
               fill={`url(#woodBar-${type})`}
-              stroke="#24170a"
+              stroke="#1f1207"
               strokeWidth="0.3"
             />
-            {/* Brass End Finials */}
-            <circle cx="16" cy="3.7" r="1.4" fill="#d4af37" stroke="#755818" strokeWidth="0.4" />
-            <circle cx="84" cy="3.7" r="1.4" fill="#d4af37" stroke="#755818" strokeWidth="0.4" />
+            {/* Brass Finial Tips */}
+            <circle cx="16" cy="3.4" r="1.3" fill="#d4af37" stroke="#684e16" strokeWidth="0.35" />
+            <circle cx="84" cy="3.4" r="1.3" fill="#d4af37" stroke="#684e16" strokeWidth="0.35" />
           </g>
 
-          {/* Dynamic Overhead Silk Marionette Suspension Threads */}
+          {/* Pure Silk Suspension Threads (Exact 100% Kinematic Synchronization, NO DOTS) */}
           {config.threads.map((t) => {
-            let dynamicTargetX = t.targetX
-            let dynamicTargetY = t.targetY
+            // Apply exact 2D trigonometry so thread endpoint stays LOCKED to the moving body part
+            const currentAngle = angles[t.angleKey]
+            const rotated = rotatePoint(
+              t.attachX,
+              t.attachY,
+              t.pivot.x,
+              t.pivot.y,
+              currentAngle
+            )
 
-            // Dynamically track the motion of each specific body part
-            if (t.part === 'head') {
-              dynamicTargetX += angles.head * 0.16
-              dynamicTargetY += Math.abs(angles.head) * 0.05
-            } else if (t.part === 'leftArm') {
-              dynamicTargetX -= angles.leftArm * 0.22
-              dynamicTargetY -= angles.leftArm * 0.1
-            } else if (t.part === 'rightArm') {
-              dynamicTargetX += angles.rightArm * 0.22
-              dynamicTargetY += angles.rightArm * 0.1
-            } else if (t.part === 'torso') {
-              dynamicTargetX += angles.torsoTilt * 0.14
-            } else if (t.part === 'skirt') {
-              dynamicTargetX += angles.skirt * 0.18
-            }
-
-            const midX = (t.barX + dynamicTargetX) / 2
-            const midY = (t.barY + dynamicTargetY) / 2
+            const midX = (t.barX + rotated.x) / 2
+            const midY = (t.barY + rotated.y) / 2
 
             return (
               <g key={t.id}>
-                {/* Luminous Silk Thread Strand */}
+                {/* Luminous Golden Silk Thread */}
                 <path
-                  d={`M ${t.barX} ${t.barY} Q ${midX} ${midY} ${dynamicTargetX} ${dynamicTargetY}`}
+                  d={`M ${t.barX} ${t.barY} Q ${midX} ${midY} ${rotated.x} ${rotated.y}`}
                   fill="none"
-                  stroke="#f3d882"
-                  strokeWidth="0.35"
-                  strokeOpacity="0.88"
+                  stroke="#fae596"
+                  strokeWidth="0.3"
+                  strokeOpacity="0.9"
                   filter={`url(#threadGlow-${type})`}
                 />
-                {/* Secondary Shadow Strand */}
+                {/* Subtle Realistic Shadow Strand */}
                 <path
-                  d={`M ${t.barX + 0.25} ${t.barY} Q ${midX + 0.25} ${midY} ${dynamicTargetX + 0.25} ${dynamicTargetY}`}
+                  d={`M ${t.barX + 0.2} ${t.barY} Q ${midX + 0.2} ${midY} ${rotated.x + 0.2} ${rotated.y}`}
                   fill="none"
-                  stroke="#432f15"
-                  strokeWidth="0.18"
-                  strokeOpacity="0.45"
+                  stroke="#38250f"
+                  strokeWidth="0.15"
+                  strokeOpacity="0.4"
                 />
-                {/* Brass Eyelet Ring on Body Part */}
-                <circle
-                  cx={dynamicTargetX}
-                  cy={dynamicTargetY}
-                  r="0.9"
-                  fill="#d4af37"
-                  stroke="#634517"
-                  strokeWidth="0.25"
-                />
-                <circle cx={dynamicTargetX} cy={dynamicTargetY} r="0.35" fill="#241708" />
               </g>
             )
           })}
-
-          {/* Stitched Joint Fastenings ("Sowed as a Puppet") */}
-          {config.stitches.map((s, idx) => (
-            <g key={`stitch-${idx}`}>
-              <line
-                x1={s.x1}
-                y1={s.y1}
-                x2={s.x2}
-                y2={s.y2}
-                stroke="#c99738"
-                strokeWidth="0.4"
-                strokeDasharray="0.6 0.6"
-              />
-            </g>
-          ))}
-
-          {/* Authentic Brass Pivot Rivets at Joint Hinges */}
-          {config.rivets.map((r, idx) => (
-            <g key={`rivet-${idx}`}>
-              {/* Outer Golden Flange */}
-              <circle
-                cx={r.x}
-                cy={r.y}
-                r="1.1"
-                fill="#d4af37"
-                stroke="#5c3f15"
-                strokeWidth="0.3"
-              />
-              {/* Inner Rivet Pin Core */}
-              <circle cx={r.x} cy={r.y} r="0.45" fill="#301e08" />
-            </g>
-          ))}
         </svg>
       </div>
 
@@ -333,14 +342,14 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
         className="relative h-full overflow-visible mx-auto"
         style={{ aspectRatio: config.aspectRatio }}
       >
-        {/* Part 1: Legs & Boots / Geta (Independent balance & stride articulation) */}
+        {/* Part 1: Legs & Platform Boots / Geta (Independent balance & stride) */}
         <img
           src={config.legsSrc}
           alt="Puppet Legs"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
           style={{
             transform: `rotate(${angles.legs}deg)`,
-            transformOrigin: config.pivots.legs,
+            transformOrigin: `${config.pivots.legs.x}% ${config.pivots.legs.y}%`,
             willChange: 'transform',
           }}
         />
@@ -352,7 +361,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
           style={{
             transform: `rotate(${angles.skirt}deg)`,
-            transformOrigin: config.pivots.skirt,
+            transformOrigin: `${config.pivots.skirt.x}% ${config.pivots.skirt.y}%`,
             willChange: 'transform',
           }}
         />
@@ -364,19 +373,19 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
           style={{
             transform: `rotate(${angles.leftArm}deg)`,
-            transformOrigin: config.pivots.leftArm,
+            transformOrigin: `${config.pivots.leftArm.x}% ${config.pivots.leftArm.y}%`,
             willChange: 'transform',
           }}
         />
 
-        {/* Part 4: Torso & Chestplate / Obi (Central anchor with subtle respiratory tilt) */}
+        {/* Part 4: Torso & Kaokui Flags / Obi (Central anchor with subtle respiratory tilt) */}
         <img
           src={config.torsoSrc}
           alt="Puppet Torso"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
           style={{
             transform: `rotate(${angles.torsoTilt}deg)`,
-            transformOrigin: config.pivots.torso,
+            transformOrigin: `${config.pivots.torso.x}% ${config.pivots.torso.y}%`,
             willChange: 'transform',
           }}
         />
@@ -388,7 +397,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
           style={{
             transform: `rotate(${angles.rightArm}deg)`,
-            transformOrigin: config.pivots.rightArm,
+            transformOrigin: `${config.pivots.rightArm.x}% ${config.pivots.rightArm.y}%`,
             willChange: 'transform',
           }}
         />
@@ -400,7 +409,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
           style={{
             transform: `rotate(${angles.head}deg)`,
-            transformOrigin: config.pivots.head,
+            transformOrigin: `${config.pivots.head.x}% ${config.pivots.head.y}%`,
             willChange: 'transform',
           }}
         />
