@@ -67,11 +67,11 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
 
     // 1. Critical assets to verify fully loaded in browser cache
     const assetsToPreload = [
-      '/assets/shadow/puppet_head_clean.png',
-      '/assets/shadow/puppet_torso_clean.png',
-      '/assets/shadow/puppet_left_arm_clean.png',
-      '/assets/shadow/puppet_right_arm_clean.png',
-      '/assets/shadow/puppet_skirt_clean.png',
+      '/assets/shadow/shadow_head_flawless.png',
+      '/assets/shadow/shadow_torso_flawless.png',
+      '/assets/shadow/shadow_left_arm_flawless.png',
+      '/assets/shadow/shadow_right_arm_flawless.png',
+      '/assets/shadow/shadow_skirt_flawless.png',
     ]
 
     let loadedCount = 0
@@ -136,57 +136,57 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
 
   // ==============================================================
   // LIVELY, RHYTHMIC CLASSICAL MARIONETTE DANCE
-  // (Faster, energetic tempo = 2.5 rad/s, fluid sine wave kinematics)
+  // (Faster, energetic tempo = 2.6 rad/s, fluid harmonic wave kinematics)
   // ==============================================================
-  const danceTempo = 2.5 // Lively, rhythmic dance tempo
+  const danceTempo = 2.6 // Lively, rhythmic dance tempo (not slow)
 
   // 1. Weightless Vertical Float & Bob
-  const danceFloatY = Math.sin(time * danceTempo) * 7.5
+  const danceFloatY = Math.sin(time * danceTempo) * 8.5
 
   // 2. Skirt & Kimono Hem: Lively rhythmic sway with weight transfer
-  const skirtAngle = Math.sin(time * danceTempo + 0.6) * 7.5 + Math.cos(time * 1.3) * 3.0
+  const skirtAngle = Math.sin(time * danceTempo + 0.6) * 8.0 + Math.cos(time * 1.4) * 3.0
 
   // 3. Left Arm: Graceful wide sweeping wave of the kimono sleeve
-  const leftArmAngle = Math.sin(time * danceTempo + 1.2) * 11.5 + Math.cos(time * 1.4) * 4.5
+  const leftArmAngle = Math.sin(time * danceTempo + 1.2) * 12.0 + Math.cos(time * 1.5) * 4.0
 
   // 4. Right Arm with Golden Fan: Lively fluttering fan and expressive lift
-  const rightArmAngle = Math.cos(time * danceTempo + 1.8) * 13.5 + Math.sin(time * 1.5) * 5.5
+  const rightArmAngle = Math.cos(time * danceTempo + 1.8) * 14.0 + Math.sin(time * 1.6) * 5.0
 
   // 5. Torso: Expressive posture breathing and musical sway
-  const torsoTilt = Math.sin(time * danceTempo + 0.3) * 3.2
-  const torsoY = Math.sin(time * danceTempo) * 2.2
+  const torsoTilt = Math.sin(time * danceTempo + 0.3) * 3.5
+  const torsoY = Math.sin(time * danceTempo) * 2.5
 
-  // 6. Head: Expressive royal nods and tilts following the fan
-  const headAngle = Math.sin(time * danceTempo) * 5.2 + Math.cos(time * 1.3) * 2.5
+  // 6. Head: Expressive court nods and tilts following the fan motion
+  const headAngle = Math.sin(time * danceTempo) * 5.5 + Math.cos(time * 1.3) * 2.2
 
   // 7. Whole Marionette Sway
   const marionetteSway = Math.sin(time * 1.2) * 1.8
 
   // ==============================================================
   // GOLDEN SILK STRINGS EXTENDING OUT OF SCREEN (NO STICK, NO CROSSBAR)
-  // Strings attach cleanly to hairpins (NOT cutting through face!), wrists & fan
-  // Coordinates mapped in 100x100 relative stage space
+  // Strings attach cleanly to top hair comb (NEVER across face!), wrists & fan
+  // Coordinates mapped in 100x100 relative stage space (aspectRatio: 620 / 1085)
   // ==============================================================
-  // Pivots in stage %
-  const headPivot = { x: 50.0, y: 19.0 }
-  const leftArmPivot = { x: 42.5, y: 31.0 }
-  const rightArmPivot = { x: 60.0, y: 29.5 }
-  const torsoPivot = { x: 50.0, y: 38.0 }
+  // Exact anatomical pivots in stage %
+  const headPivot = { x: 54.2, y: 20.5 }
+  const leftArmPivot = { x: 38.7, y: 24.0 }
+  const rightArmPivot = { x: 66.1, y: 24.0 }
+  const torsoPivot = { x: 54.2, y: 33.2 }
 
   // Dynamic attachment points calculated via rotation
-  // 1. Head string attaches to the TOP of the kanzashi hair comb (y = 5.5), NOT the face!
-  const headAttach = rotatePoint(50.0, 5.5, headPivot.x, headPivot.y, headAngle)
-  // 2. Left arm string attaches to delicate hand / sleeve edge
-  const leftArmAttach = rotatePoint(20.0, 36.0, leftArmPivot.x, leftArmPivot.y, leftArmAngle)
-  // 3. Right arm string attaches to golden fan
-  const rightArmAttach = rotatePoint(78.0, 24.0, rightArmPivot.x, rightArmPivot.y, rightArmAngle)
-  // 4. Waist / obi sash string
-  const waistAttach = rotatePoint(50.5, 43.0, torsoPivot.x, torsoPivot.y, torsoTilt)
+  // 1. Head string attaches to the very TOP of the kanzashi hair comb (y = 1.8), NEVER the face!
+  const headAttach = rotatePoint(54.2, 1.8, headPivot.x, headPivot.y, headAngle)
+  // 2. Left arm string attaches to delicate pale hand / sleeve cuff
+  const leftArmAttach = rotatePoint(26.0, 46.0, leftArmPivot.x, leftArmPivot.y, leftArmAngle)
+  // 3. Right arm string attaches to golden Sensu fan tip
+  const rightArmAttach = rotatePoint(84.0, 18.0, rightArmPivot.x, rightArmPivot.y, rightArmAngle)
+  // 4. Waist / obi sash center string
+  const waistAttach = rotatePoint(54.2, 39.0, torsoPivot.x, torsoPivot.y, torsoTilt)
 
   const threadDefinitions = [
     {
       id: 'head-crown',
-      barX: 50.0,
+      barX: 54.2,
       barY: -85.0, // Extends far out of top screen edge into black space
       endX: headAttach.x,
       endY: headAttach.y,
@@ -195,7 +195,7 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
     },
     {
       id: 'left-sleeve',
-      barX: 24.0,
+      barX: 26.0,
       barY: -85.0,
       endX: leftArmAttach.x,
       endY: leftArmAttach.y,
@@ -204,7 +204,7 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
     },
     {
       id: 'right-fan',
-      barX: 76.0,
+      barX: 84.0,
       barY: -85.0,
       endX: rightArmAttach.x,
       endY: rightArmAttach.y,
@@ -213,7 +213,7 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
     },
     {
       id: 'waist-sash',
-      barX: 52.0,
+      barX: 54.2,
       barY: -85.0,
       endX: waistAttach.x,
       endY: waistAttach.y,
@@ -271,7 +271,7 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
       <div className="relative z-20 flex flex-col items-center justify-center my-auto w-full max-w-lg">
         {/* Stage Container */}
         <div
-          className="relative w-80 sm:w-96 md:w-[420px] h-[460px] sm:h-[500px] md:h-[540px] flex items-center justify-center filter drop-shadow-[0_30px_50px_rgba(0,0,0,0.95)]"
+          className="relative w-72 sm:w-80 md:w-[380px] h-[480px] sm:h-[530px] md:h-[590px] flex items-center justify-center filter drop-shadow-[0_30px_50px_rgba(0,0,0,0.95)]"
           style={{
             transform: `rotate(${marionetteSway}deg) translateY(${danceFloatY}px)`,
             transformOrigin: '50% 10%',
@@ -280,7 +280,7 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
           {/* ==============================================================
               LAYER 1: SILK MARIONETTE THREADS (FLOWING DOWN FROM OUT OF SCREEN)
              ============================================================== */}
-          <div className="absolute inset-0 pointer-events-none z-40 overflow-visible">
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-visible">
             <svg
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
@@ -319,89 +319,89 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
 
           {/* ==============================================================
               LAYER 2: SKELETAL ASSEMBLED PUPPET PARTS
-              (Each part generated separately, seamless natural joints)
+              (Each part generated separately, seamless natural overlapping joints)
              ============================================================== */}
           <div
             className="relative w-full h-full overflow-visible"
-            style={{ aspectRatio: '900 / 1000' }}
+            style={{ aspectRatio: '620 / 1085' }}
           >
-            {/* Part 1: Left Arm & Draped Sleeve (Layered behind shoulder) */}
+            {/* Part 1: Left Arm & Draped Kimono Sleeve (Layered behind torso shoulder) */}
             <img
-              src="/assets/shadow/puppet_left_arm_clean.png"
+              src="/assets/shadow/shadow_left_arm_flawless.png"
               alt="Puppet Left Arm"
               className="absolute pointer-events-none select-none z-10"
               style={{
-                left: '17.1%',
-                top: '26.5%',
-                width: '31.2%',
-                height: '28.0%',
+                left: '2.90%',
+                top: '19.35%',
+                width: '55.32%',
+                height: '34.19%',
                 objectFit: 'contain',
                 transform: `rotate(${leftArmAngle}deg)`,
-                transformOrigin: '82% 16%', // Seamless shoulder socket pivot
+                transformOrigin: '64.7% 13.5%', // Seamless shoulder socket pivot
               }}
             />
 
-            {/* Part 2: Right Arm with Golden Sensu Fan (Layered behind shoulder) */}
+            {/* Part 2: Skirt & Flowing Kimono Hem (Tucked deeply under obi sash) */}
             <img
-              src="/assets/shadow/puppet_right_arm_clean.png"
-              alt="Puppet Right Arm with Fan"
-              className="absolute pointer-events-none select-none z-10"
-              style={{
-                left: '55.0%',
-                top: '21.5%',
-                width: '26.4%',
-                height: '28.0%',
-                objectFit: 'contain',
-                transform: `rotate(${rightArmAngle}deg)`,
-                transformOrigin: '18% 28%', // Seamless shoulder socket pivot
-              }}
-            />
-
-            {/* Part 3: Skirt & Flowing Kimono Hem (Tucked under obi waist) */}
-            <img
-              src="/assets/shadow/puppet_skirt_clean.png"
+              src="/assets/shadow/shadow_skirt_flawless.png"
               alt="Puppet Skirt & Hem"
               className="absolute pointer-events-none select-none z-20"
               style={{
-                left: '25.4%',
-                top: '35.0%',
-                width: '49.1%',
-                height: '46.0%',
+                left: '0.00%',
+                top: '39.63%',
+                width: '85.00%',
+                height: '60.18%',
                 objectFit: 'contain',
                 transform: `rotate(${skirtAngle}deg)`,
-                transformOrigin: '50% 12%', // Waist pivot under obi sash
+                transformOrigin: '63.8% 4.6%', // Waistline pivot under obi sash
+              }}
+            />
+
+            {/* Part 3: Head & Ornate Kanzashi Hairpins (Neck resting inside collar V-neck) */}
+            <img
+              src="/assets/shadow/shadow_head_flawless.png"
+              alt="Puppet Head & Kanzashi Hairpins"
+              className="absolute pointer-events-none select-none z-25"
+              style={{
+                left: '27.42%',
+                top: '0.55%',
+                width: '57.74%',
+                height: '24.06%',
+                objectFit: 'contain',
+                transform: `rotate(${headAngle}deg)`,
+                transformOrigin: '46.4% 82.8%', // Base of neck pivot
               }}
             />
 
             {/* Part 4: Torso (Kimono chest, gold brocade, obi sash) */}
             <img
-              src="/assets/shadow/puppet_torso_clean.png"
+              src="/assets/shadow/shadow_torso_flawless.png"
               alt="Puppet Torso"
               className="absolute pointer-events-none select-none z-30"
               style={{
-                left: '36.6%',
-                top: '25.0%',
-                width: '26.7%',
-                height: '31.0%',
+                left: '20.97%',
+                top: '17.97%',
+                width: '63.06%',
+                height: '28.20%',
                 objectFit: 'contain',
                 transform: `rotate(${torsoTilt}deg) translateY(${torsoY}px)`,
-                transformOrigin: '50% 50%',
+                transformOrigin: '52.7% 53.9%',
               }}
             />
 
-            {/* Part 5: Head & Ornate Hairpins (Resting gracefully in V-neckline) */}
+            {/* Part 5: Right Arm with Golden Sensu Fan (Holding fan in front of kimono) */}
             <img
-              src="/assets/shadow/puppet_head_clean.png"
-              alt="Puppet Head & Kanzashi Hairpins"
-              className="absolute pointer-events-none select-none z-40"
+              src="/assets/shadow/shadow_right_arm_flawless.png"
+              alt="Puppet Right Arm with Fan"
+              className="absolute pointer-events-none select-none z-35"
               style={{
-                left: '37.8%',
-                top: '4.0%',
-                width: '24.4%',
-                height: '28.0%',
+                left: '50.00%',
+                top: '13.82%',
+                width: '49.68%',
+                height: '30.88%',
                 objectFit: 'contain',
-                transform: `rotate(${headAngle}deg)`,
-                transformOrigin: '50% 90%', // Base of neck pivot
+                transform: `rotate(${rightArmAngle}deg)`,
+                transformOrigin: '32.5% 32.8%', // Seamless shoulder socket pivot
               }}
             />
           </div>

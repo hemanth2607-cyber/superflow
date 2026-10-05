@@ -149,23 +149,23 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
       case 'japanese':
         return {
           aspectRatio: '620 / 1085',
-          torsoSrc: '/assets/shadow/jp_part_torso.png',
-          skirtSrc: '/assets/shadow/jp_part_skirt.png',
-          leftArmSrc: '/assets/shadow/jp_part_left_arm.png',
-          rightArmSrc: '/assets/shadow/jp_part_right_arm.png',
-          headSrc: '/assets/shadow/jp_part_head.png',
+          torsoSrc: '/assets/shadow/shadow_torso_flawless.png',
+          skirtSrc: '/assets/shadow/shadow_skirt_flawless.png',
+          leftArmSrc: '/assets/shadow/shadow_left_arm_flawless.png',
+          rightArmSrc: '/assets/shadow/shadow_right_arm_flawless.png',
+          headSrc: '/assets/shadow/shadow_head_flawless.png',
           pivots: {
-            head: { x: 52.0, y: 18.0 },
-            leftArm: { x: 32.0, y: 28.0 },
-            rightArm: { x: 68.0, y: 25.0 },
-            torso: { x: 52.0, y: 35.0 },
-            skirt: { x: 52.0, y: 48.0 },
+            head: { x: 54.2, y: 20.5 },
+            leftArm: { x: 38.7, y: 24.0 },
+            rightArm: { x: 66.1, y: 24.0 },
+            torso: { x: 54.2, y: 33.2 },
+            skirt: { x: 54.2, y: 42.4 },
           },
           threads: [
-            { id: 'head', barX: 52.0, barY: 3.5, attachX: 52.0, attachY: 5.0, pivot: { x: 52.0, y: 18.0 }, angleKey: 'head' as const },
-            { id: 'rightArm', barX: 76.0, barY: 3.5, attachX: 78.0, attachY: 22.0, pivot: { x: 68.0, y: 25.0 }, angleKey: 'rightArm' as const },
-            { id: 'leftArm', barX: 25.0, barY: 3.5, attachX: 24.0, attachY: 34.0, pivot: { x: 32.0, y: 28.0 }, angleKey: 'leftArm' as const },
-            { id: 'waist', barX: 44.0, barY: 3.5, attachX: 52.0, attachY: 40.0, pivot: { x: 52.0, y: 35.0 }, angleKey: 'torsoTilt' as const },
+            { id: 'head', barX: 54.2, barY: 3.5, attachX: 54.2, attachY: 1.8, pivot: { x: 54.2, y: 20.5 }, angleKey: 'head' as const },
+            { id: 'rightArm', barX: 84.0, barY: 3.5, attachX: 84.0, attachY: 18.0, pivot: { x: 66.1, y: 24.0 }, angleKey: 'rightArm' as const },
+            { id: 'leftArm', barX: 26.0, barY: 3.5, attachX: 26.0, attachY: 46.0, pivot: { x: 38.7, y: 24.0 }, angleKey: 'leftArm' as const },
+            { id: 'waist', barX: 54.2, barY: 3.5, attachX: 54.2, attachY: 39.0, pivot: { x: 54.2, y: 33.2 }, angleKey: 'torsoTilt' as const },
           ],
         }
 
