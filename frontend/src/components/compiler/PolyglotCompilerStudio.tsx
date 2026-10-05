@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useAudioStore } from '../../stores/useAudioStore'
 import { Icon } from '../ui/Icon'
 import { VirtualAIModelHubModal } from './VirtualAIModelHubModal'
+import { LanguageCatalog500Modal } from './LanguageCatalog500Modal'
 import {
   VIRTUAL_AI_MODELS,
   getStoredVirtualModel,
   executeVirtualAICodingTask,
   VirtualAIResponse,
 } from '../../services/virtualAiService'
+import {
+  POLYGLOT_500_LANGUAGES,
+  PolyglotLanguage,
+} from '../../services/polyglot500Languages'
 
 // Declare electronAPI on window for TypeScript
 declare global {
@@ -843,10 +848,28 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
 }) => {
   const { playClick, playPluck } = useAudioStore()
 
+  // Helper to map 500 catalog language to studio LanguageDef
+  const mapPolyglotToLanguageDef = (lang: PolyglotLanguage): LanguageDef => ({
+    id: lang.id,
+    name: lang.name,
+    extension: lang.extension,
+    pistonLang: lang.pistonLang || (SUPPORTED_LANGUAGES.some((s) => s.id === lang.id) ? lang.id : 'python'),
+    version: lang.year ? `Est. ${lang.year}` : 'Polyglot 500+',
+    icon: '⚡',
+    category: 'systems',
+    starterCode: lang.starterCode,
+  })
+
   // Selected language definition
-  const [selectedLang, setSelectedLang] = useState<LanguageDef>(
-    SUPPORTED_LANGUAGES.find((l) => l.id === initialLanguage) || SUPPORTED_LANGUAGES[0]
-  )
+  const [selectedLang, setSelectedLang] = useState<LanguageDef>(() => {
+    const in33 = SUPPORTED_LANGUAGES.find((l) => l.id === initialLanguage)
+    if (in33) return in33
+    const in500 = POLYGLOT_500_LANGUAGES.find((l) => l.id === initialLanguage)
+    if (in500) {
+      return mapPolyglotToLanguageDef(in500)
+    }
+    return SUPPORTED_LANGUAGES[0]
+  })
 
   // Current code buffer (keyed by language id)
   const [codeMap, setCodeMap] = useState<Record<string, string>>(() => {
@@ -873,6 +896,9 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
   const [searchFilter, setSearchFilter] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
+  // 505 Languages Directory Modal State
+  const [is500CatalogOpen, setIs500CatalogOpen] = useState(false)
+
   // Virtual AI Model State & Copilot Drawer
   const [isVirtualAIModalOpen, setIsVirtualAIModalOpen] = useState(false)
   const [showAICopilot, setShowAICopilot] = useState(false)
@@ -885,6 +911,21 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
     VIRTUAL_AI_MODELS.find((m) => m.id === activeVirtualModelId) || VIRTUAL_AI_MODELS[0]
 
   const currentCode = codeMap[selectedLang.id] || selectedLang.starterCode
+
+  // Sync initialLanguage prop changes
+  useEffect(() => {
+    if (initialLanguage && initialLanguage !== selectedLang.id) {
+      const in33 = SUPPORTED_LANGUAGES.find((l) => l.id === initialLanguage)
+      if (in33) {
+        setSelectedLang(in33)
+        return
+      }
+      const in500 = POLYGLOT_500_LANGUAGES.find((l) => l.id === initialLanguage)
+      if (in500) {
+        setSelectedLang(mapPolyglotToLanguageDef(in500))
+      }
+    }
+  }, [initialLanguage])
 
   const handleCodeChange = (newCode: string) => {
     setCodeMap((prev) => ({
@@ -901,6 +942,27 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
     setExitCode(null)
     setDurationMs(null)
     setExecutionEngine('Ready')
+  }
+
+  const handleSelectFrom500Catalog = (lang: PolyglotLanguage) => {
+    setIs500CatalogOpen(false)
+    playPluck('C5')
+
+    // Check if in 33 fast list
+    const existing = SUPPORTED_LANGUAGES.find((l) => l.id === lang.id)
+    if (existing) {
+      handleSelectLanguage(existing)
+      return
+    }
+
+    // Dynamic language definition from 500 catalog
+    const dynamicLang = mapPolyglotToLanguageDef(lang)
+
+    setCodeMap((prev) => ({
+      ...prev,
+      [dynamicLang.id]: prev[dynamicLang.id] || dynamicLang.starterCode,
+    }))
+    handleSelectLanguage(dynamicLang)
   }
 
   // Universal Code Execution Engine (Local Native Electron + Universal Piston Cloud Fallback)
@@ -1075,21 +1137,43 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-display font-extrabold text-lg text-ink">Polyglot Compiler Studio</h2>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-gold/20 text-gold font-bold border border-gold/40">
-                33 Languages
-              </span>
+              <button
+                onClick={() => {
+                  playClick()
+                  setIs500CatalogOpen(true)
+                }}
+                className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-gold/20 text-gold font-bold border border-gold/40 hover:bg-gold/30 hover:scale-105 transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                title="Browse and search all 505 supported programming languages"
+              >
+                <span>⚡ 505 Languages</span>
+                <span className="text-[9px] opacity-70">Catalog →</span>
+              </button>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
                 ☁️ 13 Virtual AI Models
               </span>
             </div>
             <p className="text-xs text-muted font-sans">
-              Compile & run all known programming languages. All coding AI models connected virtually in the cloud (zero local weights required).
+              Compile & run over 500 programming languages natively or via universal cloud sandbox. All coding AI models connected virtually (zero local downloads).
             </p>
           </div>
         </div>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
+          {/* 505 Languages Directory Opener */}
+          <button
+            onClick={() => {
+              playClick()
+              setIs500CatalogOpen(true)
+            }}
+            className="px-3 py-1.5 rounded-xl border border-gold/40 bg-gold/15 hover:bg-gold/25 text-gold text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer hover:scale-105"
+            title="Open Directory of 505 Programming Languages"
+          >
+            <span>📚</span>
+            <span>505 Languages</span>
+            <span className="px-1.5 py-0.2 rounded bg-gold/20 text-[10px] font-mono">Directory</span>
+          </button>
+
           {/* Virtual AI Hub Modal Opener */}
           <button
             onClick={() => {
@@ -1174,7 +1258,7 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
         {/* Category Filter Pills */}
         <div className="flex flex-wrap items-center gap-1.5">
           {[
-            { id: 'all', label: 'All 33' },
+            { id: 'all', label: 'Fast 33' },
             { id: 'systems', label: 'Systems (C/C++/Rust/Zig/Go)' },
             { id: 'interpreted', label: 'Scripting (Python/Ruby/PHP/Lua)' },
             { id: 'jvm', label: 'Enterprise (Java/Kotlin/C#)' },
@@ -1194,6 +1278,17 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
               {cat.label}
             </button>
           ))}
+
+          {/* Direct 500 Directory Modal Button */}
+          <button
+            onClick={() => {
+              playClick()
+              setIs500CatalogOpen(true)
+            }}
+            className="px-2.5 py-1 rounded-lg text-[11px] font-sans transition-all cursor-pointer bg-gold/15 hover:bg-gold/25 text-gold border border-gold/40 font-bold flex items-center gap-1 shadow-xs ml-1"
+          >
+            <span>⚡ All 505 Languages</span>
+          </button>
         </div>
 
         {/* Search Input */}
@@ -1219,6 +1314,15 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
 
       {/* Language Selector Carousel / Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        {/* If current selected language is from the 500 catalog and not in the fast 33 list, display it first */}
+        {!filteredLanguages.some((l) => l.id === selectedLang.id) && (
+          <div className="shrink-0 px-3 py-1.5 rounded-xl border border-gold text-xs font-sans bg-gold/20 text-ink font-bold shadow-xs flex items-center gap-2 ring-2 ring-gold/40">
+            <span className="text-base">{selectedLang.icon}</span>
+            <span>{selectedLang.name}</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-gold/30 text-gold">500+ Active</span>
+          </div>
+        )}
+
         {filteredLanguages.map((lang) => {
           const isSelected = selectedLang.id === lang.id
           return (
@@ -1237,6 +1341,18 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
             </button>
           )
         })}
+
+        {/* 505 Languages Directory Quick Opener */}
+        <button
+          onClick={() => {
+            playClick()
+            setIs500CatalogOpen(true)
+          }}
+          className="shrink-0 px-3 py-1.5 rounded-xl border border-dashed border-gold/60 text-xs font-sans transition-all flex items-center gap-1.5 cursor-pointer bg-gold/5 hover:bg-gold/15 text-gold font-bold hover:scale-105"
+        >
+          <span>⚡</span>
+          <span>+ Browse All 505 Languages</span>
+        </button>
       </div>
 
       {/* Main Grid: Code Editor + AI Copilot Drawer (optional) + Output Terminal */}
@@ -1522,6 +1638,14 @@ export const PolyglotCompilerStudio: React.FC<PolyglotCompilerStudioProps> = ({
           setActiveVirtualModelId(modelId)
           playPluck('F4')
         }}
+      />
+
+      {/* Universal 500+ Programming Language Directory Modal */}
+      <LanguageCatalog500Modal
+        isOpen={is500CatalogOpen}
+        onClose={() => setIs500CatalogOpen(false)}
+        onSelectLanguage={handleSelectFrom500Catalog}
+        currentLanguageId={selectedLang.id}
       />
     </div>
   )

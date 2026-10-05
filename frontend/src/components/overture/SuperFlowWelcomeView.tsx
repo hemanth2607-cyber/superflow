@@ -4,6 +4,8 @@ import { useFlowStore } from '../../stores/useFlowStore'
 import { useAudioStore } from '../../stores/useAudioStore'
 import { PolyglotCompilerStudio, SUPPORTED_LANGUAGES } from '../compiler/PolyglotCompilerStudio'
 import { VirtualAIModelHubModal } from '../compiler/VirtualAIModelHubModal'
+import { LanguageCatalog500Modal } from '../compiler/LanguageCatalog500Modal'
+import { PolyglotLanguage } from '../../services/polyglot500Languages'
 import { getStoredVirtualModel, VIRTUAL_AI_MODELS } from '../../services/virtualAiService'
 
 export const SuperFlowWelcomeView: React.FC = () => {
@@ -16,6 +18,9 @@ export const SuperFlowWelcomeView: React.FC = () => {
   // Active view: 'welcome' or 'compiler'
   const [showCompiler, setShowCompiler] = useState(false)
   const [selectedCompilerLang, setSelectedCompilerLang] = useState('python')
+
+  // 505 Languages Directory Modal State
+  const [is500CatalogOpen, setIs500CatalogOpen] = useState(false)
 
   // Virtual AI Hub Modal state
   const [isVirtualAIModalOpen, setIsVirtualAIModalOpen] = useState(false)
@@ -88,15 +93,14 @@ export const SuperFlowWelcomeView: React.FC = () => {
   const capabilities = [
     {
       id: 'polyglot-compiler',
-      title: '33-Language Polyglot Compiler',
-      tagline: 'Runs All Known Languages',
-      desc: 'Compile & execute C, C++, Rust, Python, Java, Go, TypeScript, C#, Ruby, PHP, Zig, Lua, Kotlin, Swift, Haskell, and SQL with zero configuration.',
+      title: '500+ Polyglot Language Compiler',
+      tagline: '505 Languages Supported',
+      desc: 'Compile, interpret, and run over 500 programming languages from systems (C, C++, Rust, Zig, Go) to enterprise (Java, C#, Kotlin), scripting (Python, Ruby, Lua), functional (Haskell, Lisp, Elixir), logic, and esoteric computing.',
       icon: '⚡',
       accent: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
-      action: 'Open Polyglot Studio',
+      action: 'Open 505 Polyglot Studio',
       onClick: () => {
         playPluck('C5')
-        setSelectedCompilerLang('c')
         setShowCompiler(true)
       },
     },
@@ -161,6 +165,13 @@ export const SuperFlowWelcomeView: React.FC = () => {
     setShowCompiler(true)
   }
 
+  const handleSelectFrom500Modal = (lang: PolyglotLanguage) => {
+    setSelectedCompilerLang(lang.id)
+    setShowCompiler(true)
+    setIs500CatalogOpen(false)
+    playPluck('E5')
+  }
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6 animate-fadeIn">
       {/* 1. Header Banner */}
@@ -170,18 +181,34 @@ export const SuperFlowWelcomeView: React.FC = () => {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SuperFlow Autonomous Polyglot Workbench</span>
             <span className="text-muted/60">•</span>
-            <span className="text-blue-300 font-mono">13 Virtual Models Ready</span>
+            <span className="text-gold font-mono font-bold">505 Programming Languages</span>
+            <span className="text-muted/60">•</span>
+            <span className="text-blue-300 font-mono">13 Virtual Models</span>
           </div>
           <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight">
             Welcome to <span className="text-gold">SuperFlow</span>
           </h1>
           <p className="text-muted text-sm sm:text-base font-sans mt-1">
-            Universal development engine with 33-language compilation, 13 virtual coding AI models (zero local downloads), and autonomous agent loops.
+            Universal development engine with 505-language compilation, 13 virtual coding AI models (zero local downloads), and autonomous agent loops.
           </p>
         </div>
 
         {/* Quick Launch Buttons */}
         <div className="flex items-center gap-2.5 flex-wrap">
+          {/* 505 Languages Directory Modal Trigger */}
+          <button
+            onClick={() => {
+              playClick()
+              setIs500CatalogOpen(true)
+            }}
+            className="px-3.5 py-2 rounded-xl bg-gold/15 hover:bg-gold/25 border border-gold/40 text-gold font-sans text-xs font-bold shadow-md flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+            title="Browse all 505 supported programming languages"
+          >
+            <span>⚡</span>
+            <span>505 Languages</span>
+            <span className="px-1.5 py-0.5 rounded bg-gold/30 text-gold text-[10px] font-mono">Directory</span>
+          </button>
+
           {/* Virtual AI Hub Trigger */}
           <button
             onClick={() => {
@@ -209,7 +236,7 @@ export const SuperFlowWelcomeView: React.FC = () => {
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/30'
             }`}
           >
-            <span>{showCompiler ? '✕ Close Compiler' : '⚡ Polyglot Compiler (33)'}</span>
+            <span>{showCompiler ? '✕ Close Compiler' : '⚡ Polyglot Compiler (505)'}</span>
           </button>
 
           <button
@@ -383,7 +410,7 @@ export const SuperFlowWelcomeView: React.FC = () => {
             <div className="flex flex-col gap-1.5">
               {[
                 { name: 'superflow-core', path: '~/agent_engine', status: 'Active' },
-                { name: 'polyglot-compiler', path: '~/compiler/engine', status: '33 Langs' },
+                { name: 'polyglot-compiler', path: '~/compiler/engine', status: '505 Langs' },
                 { name: 'virtual-ai-hub', path: '~/virtual/models', status: '13 Models' },
               ].map((rec) => (
                 <button
@@ -495,13 +522,13 @@ export const SuperFlowWelcomeView: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
               <span className="text-foreground/90 font-medium">Virtual AI & Polyglot Engine:</span>
-              <span className="font-mono text-[11px]">33 Languages • 13 Virtual AI Models Active</span>
+              <span className="font-mono text-[11px]">505 Languages • 13 Virtual AI Models Active</span>
             </div>
             <button
-              onClick={() => setIsVirtualAIModalOpen(true)}
+              onClick={() => setIs500CatalogOpen(true)}
               className="text-gold hover:underline cursor-pointer font-medium"
             >
-              Configure Virtual AI →
+              Browse 505 Languages Catalog →
             </button>
           </div>
         </div>
@@ -515,6 +542,14 @@ export const SuperFlowWelcomeView: React.FC = () => {
           setActiveVirtualModelId(modelId)
           playPluck('F4')
         }}
+      />
+
+      {/* Universal 500+ Programming Languages Catalog Modal */}
+      <LanguageCatalog500Modal
+        isOpen={is500CatalogOpen}
+        onClose={() => setIs500CatalogOpen(false)}
+        onSelectLanguage={handleSelectFrom500Modal}
+        currentLanguageId={selectedCompilerLang}
       />
     </div>
   )
