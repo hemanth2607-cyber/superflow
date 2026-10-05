@@ -79,7 +79,7 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-between bg-black select-none transition-opacity duration-700 ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between bg-black select-none transition-opacity duration-700 ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
