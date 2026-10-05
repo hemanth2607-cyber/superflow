@@ -3,6 +3,8 @@ import { Icon } from '../ui/Icon'
 import { useFlowStore } from '../../stores/useFlowStore'
 import { useAudioStore } from '../../stores/useAudioStore'
 import { PolyglotCompilerStudio, SUPPORTED_LANGUAGES } from '../compiler/PolyglotCompilerStudio'
+import { VirtualAIModelHubModal } from '../compiler/VirtualAIModelHubModal'
+import { getStoredVirtualModel, VIRTUAL_AI_MODELS } from '../../services/virtualAiService'
 
 export const SuperFlowWelcomeView: React.FC = () => {
   const { setStage, setActionType, setFolderPath, setProjectName } = useFlowStore()
@@ -14,6 +16,13 @@ export const SuperFlowWelcomeView: React.FC = () => {
   // Active view: 'welcome' or 'compiler'
   const [showCompiler, setShowCompiler] = useState(false)
   const [selectedCompilerLang, setSelectedCompilerLang] = useState('python')
+
+  // Virtual AI Hub Modal state
+  const [isVirtualAIModalOpen, setIsVirtualAIModalOpen] = useState(false)
+  const [activeVirtualModelId, setActiveVirtualModelId] = useState<string>(getStoredVirtualModel())
+
+  const activeModel =
+    VIRTUAL_AI_MODELS.find((m) => m.id === activeVirtualModelId) || VIRTUAL_AI_MODELS[0]
 
   // Real workspace files from the project
   const workspaceFiles = [
@@ -79,9 +88,9 @@ export const SuperFlowWelcomeView: React.FC = () => {
   const capabilities = [
     {
       id: 'polyglot-compiler',
-      title: 'Universal Polyglot Compiler',
-      tagline: 'Runs All Languages',
-      desc: 'Compile & execute C, C++, Rust, Python, Java, Go, TypeScript, C#, Ruby, PHP, Zig, Lua, and SQL natively or via sandboxed cloud runner.',
+      title: '33-Language Polyglot Compiler',
+      tagline: 'Runs All Known Languages',
+      desc: 'Compile & execute C, C++, Rust, Python, Java, Go, TypeScript, C#, Ruby, PHP, Zig, Lua, Kotlin, Swift, Haskell, and SQL with zero configuration.',
       icon: '⚡',
       accent: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
       action: 'Open Polyglot Studio',
@@ -89,6 +98,19 @@ export const SuperFlowWelcomeView: React.FC = () => {
         playPluck('C5')
         setSelectedCompilerLang('c')
         setShowCompiler(true)
+      },
+    },
+    {
+      id: 'virtual-ai-models',
+      title: '13 Virtual Coding AI Models',
+      tagline: 'Zero Local Setup Required',
+      desc: 'Connected virtually in the cloud (Claude 3.7 Sonnet, DeepSeek-R1, GPT-4o, Gemini 2.5, Qwen 2.5 Coder, Codestral). No local model weights, GPUs, or Ollama needed.',
+      icon: '☁️',
+      accent: 'border-blue-500/40 text-blue-400 bg-blue-500/10',
+      action: 'Configure AI Models',
+      onClick: () => {
+        playClick()
+        setIsVirtualAIModalOpen(true)
       },
     },
     {
@@ -112,19 +134,6 @@ export const SuperFlowWelcomeView: React.FC = () => {
       icon: 'website',
       accent: 'border-bamboo/40 text-bamboo bg-bamboo/10',
       action: 'Explore Browser Agent',
-      onClick: () => {
-        playClick()
-        setStage('workshop')
-      },
-    },
-    {
-      id: 'tool-registry',
-      title: 'Dynamic MCP & Tool Auto-Discovery',
-      tagline: 'Universal Extensibility',
-      desc: 'Instantly discover and bind external tools via Model Context Protocol (MCP), Python tool registries, and sandboxed shell execution.',
-      icon: 'settings',
-      accent: 'border-vermilion/40 text-vermilion bg-vermilion/10',
-      action: 'Browse Tool Registry',
       onClick: () => {
         playClick()
         setStage('workshop')
@@ -154,23 +163,41 @@ export const SuperFlowWelcomeView: React.FC = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6 animate-fadeIn">
-      {/* 1. Header Banner: VS Code Welcome Page evolved with SuperFlow Power */}
+      {/* 1. Header Banner */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 mb-6 border-b border-border-warm/50 gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold text-xs font-sans mb-2 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>SuperFlow Autonomous Polyglot Workbench</span>
+            <span className="text-muted/60">•</span>
+            <span className="text-blue-300 font-mono">13 Virtual Models Ready</span>
           </div>
           <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight">
             Welcome to <span className="text-gold">SuperFlow</span>
           </h1>
           <p className="text-muted text-sm sm:text-base font-sans mt-1">
-            Universal development engine with polyglot code compilation, autonomous agent orchestration, and project management.
+            Universal development engine with 33-language compilation, 13 virtual coding AI models (zero local downloads), and autonomous agent loops.
           </p>
         </div>
 
         {/* Quick Launch Buttons */}
         <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Virtual AI Hub Trigger */}
+          <button
+            onClick={() => {
+              playClick()
+              setIsVirtualAIModalOpen(true)
+            }}
+            className="px-3.5 py-2 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/40 text-blue-300 font-sans text-xs font-bold shadow-md flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+          >
+            <span>☁️</span>
+            <span>Virtual AI Hub</span>
+            <span className="px-1.5 py-0.5 rounded bg-blue-500/30 text-blue-200 text-[10px] font-mono">
+              {activeModel.name.split(' ')[0]}
+            </span>
+          </button>
+
+          {/* Polyglot Compiler Toggle */}
           <button
             onClick={() => {
               playPluck('C5')
@@ -182,7 +209,7 @@ export const SuperFlowWelcomeView: React.FC = () => {
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/30'
             }`}
           >
-            <span>{showCompiler ? '✕ Close Compiler' : '⚡ Polyglot Compiler'}</span>
+            <span>{showCompiler ? '✕ Close Compiler' : '⚡ Polyglot Compiler (33)'}</span>
           </button>
 
           <button
@@ -213,23 +240,41 @@ export const SuperFlowWelcomeView: React.FC = () => {
       )}
 
       {/* 3. Polyglot Language Quick-Launch Bar */}
-      <div className="mb-6 p-3 rounded-2xl border border-border-warm/60 bg-surface/40 flex items-center justify-between gap-3 overflow-x-auto">
+      <div className="mb-6 p-3 rounded-2xl border border-border-warm/60 bg-surface/40 flex items-center justify-between gap-3 overflow-x-auto scrollbar-thin">
         <span className="text-[11px] font-sans font-semibold text-foreground/80 shrink-0 flex items-center gap-1.5">
           <span>⚡</span>
           <span>Compile & Run:</span>
         </span>
         <div className="flex items-center gap-1.5 shrink-0">
-          {['python', 'c', 'cpp', 'rust', 'java', 'go', 'typescript', 'csharp', 'php', 'ruby', 'zig', 'sql'].map((langId) => {
-            const def = SUPPORTED_LANGUAGES.find((l) => l.id === langId)
-            if (!def) return null
+          {[
+            { id: 'python', name: 'Python', icon: '🐍' },
+            { id: 'c', name: 'C', icon: '⚙️' },
+            { id: 'cpp', name: 'C++', icon: '⚡' },
+            { id: 'rust', name: 'Rust', icon: '🦀' },
+            { id: 'go', name: 'Go', icon: '🐹' },
+            { id: 'zig', name: 'Zig', icon: '⚡' },
+            { id: 'java', name: 'Java', icon: '☕' },
+            { id: 'kotlin', name: 'Kotlin', icon: '🟣' },
+            { id: 'typescript', name: 'TypeScript', icon: '📘' },
+            { id: 'csharp', name: 'C#', icon: '🔷' },
+            { id: 'ruby', name: 'Ruby', icon: '💎' },
+            { id: 'swift', name: 'Swift', icon: '🕊️' },
+            { id: 'haskell', name: 'Haskell', icon: 'λ' },
+            { id: 'sql', name: 'SQL', icon: '🗄️' },
+          ].map((lang) => {
+            const isCurrent = showCompiler && selectedCompilerLang === lang.id
             return (
               <button
-                key={langId}
-                onClick={() => handleOpenCompilerWithLang(langId)}
-                className="px-2.5 py-1 rounded-lg bg-surface hover:bg-gold/20 border border-border-warm/60 hover:border-gold/40 text-[11px] font-sans text-muted hover:text-foreground transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                key={lang.id}
+                onClick={() => handleOpenCompilerWithLang(lang.id)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-sans font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  isCurrent
+                    ? 'bg-gold text-black font-bold shadow-xs'
+                    : 'bg-surface hover:bg-surface-hover border border-border-warm text-muted hover:text-ink hover:border-gold/40'
+                }`}
               >
-                <span>{def.icon}</span>
-                <span>{def.name.split(' ')[0]}</span>
+                <span>{lang.icon}</span>
+                <span>{lang.name}</span>
               </button>
             )
           })}
@@ -240,27 +285,25 @@ export const SuperFlowWelcomeView: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* ==============================================================
             LEFT PANEL (5 COLS): WORKSPACE & PROJECT FILE EXPLORER
-            ============================================================== */}
-        <div className="lg:col-span-5 flex flex-col gap-5">
-          {/* Workspace Explorer Container */}
-          <div className="glass-panel p-5 rounded-2xl border border-border-warm shadow-md flex flex-col">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-warm/40">
+           ============================================================== */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          <div className="glass-panel p-5 border border-border-warm flex flex-col">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-border-warm/50">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gold/15 text-gold flex items-center justify-center border border-gold/30">
-                  <Icon name="folder" size={18} />
-                </div>
-                <div>
-                  <h3 className="font-display font-bold text-sm text-ink">Project Files</h3>
-                  <span className="text-[11px] text-muted">c:/Users/heman/Desktop/agent_engine</span>
-                </div>
+                <Icon name="folder" size={16} className="text-gold" />
+                <h3 className="font-display font-bold text-sm text-ink">Project Explorer</h3>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-bamboo/15 text-bamboo font-mono font-medium">
-                {workspaceFiles.length} Files Ready
+              <span className="text-[10px] font-mono text-muted">
+                {workspaceFiles.length} key files in workspace
               </span>
             </div>
 
-            {/* Scrollable File List with Badges */}
-            <div className="flex flex-col gap-2 max-h-[340px] overflow-y-auto pr-1">
+            <p className="text-xs text-muted font-sans mb-3">
+              Explore your live SuperFlow workspace files. Click any file to inspect purpose, size, and code.
+            </p>
+
+            {/* File List */}
+            <div className="flex flex-col gap-1.5">
               {workspaceFiles.map((file) => {
                 const isSelected = selectedFile === file.name
                 return (
@@ -270,22 +313,22 @@ export const SuperFlowWelcomeView: React.FC = () => {
                       playClick()
                       setSelectedFile(isSelected ? null : file.name)
                     }}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                    className={`p-2.5 rounded-xl border text-xs font-mono transition-all cursor-pointer flex flex-col gap-1 ${
                       isSelected
                         ? 'border-gold bg-gold/10 shadow-xs'
                         : 'border-border-warm/60 bg-surface/50 hover:bg-surface-hover hover:border-gold/30'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">
-                          {file.category === 'python' ? '🐍' : file.category === 'batch' ? '⚡' : '📋'}
-                        </span>
-                        <span className="font-mono text-xs font-semibold text-ink truncate max-w-[200px]">
-                          {file.name}
-                        </span>
+                      <div className="flex items-center gap-2 truncate">
+                        <Icon
+                          name="file"
+                          size={14}
+                          className={file.category === 'python' ? 'text-gold' : 'text-muted'}
+                        />
+                        <span className="truncate font-semibold text-foreground/90">{file.name}</span>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 font-sans text-muted font-medium">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface border border-border-warm text-muted shrink-0">
                         {file.badge}
                       </span>
                     </div>
@@ -315,7 +358,7 @@ export const SuperFlowWelcomeView: React.FC = () => {
               })}
             </div>
 
-            {/* Quick Actions Footer inside Explorer */}
+            {/* Direct Folder Jump Buttons */}
             <div className="mt-4 pt-3 border-t border-border-warm/40 grid grid-cols-2 gap-2 text-xs font-sans">
               <button
                 onClick={() => handleOpenFolder('c:/Users/heman/Desktop/agent_engine/workspace', 'workspace')}
@@ -334,27 +377,25 @@ export const SuperFlowWelcomeView: React.FC = () => {
             </div>
           </div>
 
-          {/* Recent Workspaces Pinned Card */}
-          <div className="glass-panel p-4 rounded-2xl border border-border-warm">
-            <h4 className="text-xs font-sans uppercase tracking-widest text-muted mb-2.5 flex items-center gap-2">
-              <span>Recent Sessions</span>
-              <span className="w-8 h-[1px] bg-border-warm" />
-            </h4>
+          {/* Quick Stats / Recent Projects */}
+          <div className="glass-panel p-4 border border-border-warm text-xs font-sans">
+            <h4 className="font-display font-bold text-ink mb-2">Recent Agent Sessions</h4>
             <div className="flex flex-col gap-1.5">
               {[
                 { name: 'superflow-core', path: '~/agent_engine', status: 'Active' },
-                { name: 'polyglot-compiler', path: '~/compiler/engine', status: 'Compiled' },
-                { name: 'auto-discovery-suite', path: '~/tests/discovery', status: 'Passed' },
+                { name: 'polyglot-compiler', path: '~/compiler/engine', status: '33 Langs' },
+                { name: 'virtual-ai-hub', path: '~/virtual/models', status: '13 Models' },
               ].map((rec) => (
                 <button
                   key={rec.name}
-                  onClick={() => handleOpenFolder(rec.path, rec.name)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-surface-hover text-left transition-colors group cursor-pointer text-xs"
+                  onClick={() => handleOpenFolder('c:/Users/heman/Desktop/agent_engine', rec.name)}
+                  className="p-2 rounded-lg hover:bg-surface-hover border border-transparent hover:border-border-warm transition-colors flex items-center justify-between text-left cursor-pointer"
                 >
-                  <span className="font-mono text-ink group-hover:text-gold transition-colors">
-                    {rec.name}
-                  </span>
-                  <span className="text-[10px] text-muted group-hover:text-foreground">
+                  <div className="truncate">
+                    <div className="font-semibold text-ink truncate">{rec.name}</div>
+                    <div className="text-[10px] text-muted font-mono">{rec.path}</div>
+                  </div>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     {rec.status}
                   </span>
                 </button>
@@ -364,14 +405,14 @@ export const SuperFlowWelcomeView: React.FC = () => {
         </div>
 
         {/* ==============================================================
-            RIGHT PANEL (7 COLS): WHAT SUPERFLOW CAN DO (CAPABILITIES)
-            ============================================================== */}
-        <div className="lg:col-span-7 flex flex-col gap-5">
-          <div className="glass-panel p-6 rounded-2xl border border-border-warm shadow-md flex flex-col">
+            RIGHT PANEL (7 COLS): SUPERFLOW CAPABILITIES & WALKTHROUGHS
+           ============================================================== */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="glass-panel p-5 border border-border-warm">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-warm/40">
               <div>
                 <h3 className="font-display font-bold text-base text-ink">What SuperFlow Can Do</h3>
-                <p className="text-xs text-muted">Core capabilities, compilers, and agent execution architectures</p>
+                <p className="text-xs text-muted">Core capabilities, compilers, and virtual cloud AI models</p>
               </div>
               <span className="text-[11px] font-sans px-2.5 py-1 rounded-full bg-gold/15 text-gold font-medium border border-gold/30">
                 4 Core Engines
@@ -383,19 +424,22 @@ export const SuperFlowWelcomeView: React.FC = () => {
               {capabilities.map((cap) => (
                 <div
                   key={cap.id}
-                  className="p-4 rounded-xl border border-border-warm/70 bg-surface/40 hover:bg-surface-hover hover:border-gold/40 transition-all flex flex-col justify-between group shadow-xs"
+                  className="p-4 rounded-xl border border-border-warm/70 bg-surface/40 hover:bg-surface hover:border-gold/50 transition-all flex flex-col justify-between group shadow-2xs"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className={`text-[10px] uppercase font-mono font-semibold px-2 py-0.5 rounded-full border ${cap.accent}`}>
+                      <span className={`px-2.5 py-1 rounded-lg border text-xs font-mono font-medium ${cap.accent}`}>
                         {cap.tagline}
                       </span>
-                      <Icon name="arrow-right" size={14} className="text-muted/50 group-hover:text-gold group-hover:translate-x-1 transition-all" />
+                      <span className="text-lg opacity-80 group-hover:scale-110 transition-transform">
+                        {cap.icon === 'sparkles' ? '✨' : cap.icon === 'settings' ? '⚙️' : cap.icon === 'website' ? '🌐' : cap.icon}
+                      </span>
                     </div>
-                    <h4 className="font-display font-bold text-sm text-ink mb-1.5 group-hover:text-gold transition-colors">
+
+                    <h4 className="font-display font-bold text-sm text-ink group-hover:text-gold transition-colors mb-1">
                       {cap.title}
                     </h4>
-                    <p className="text-xs text-muted leading-relaxed mb-3">
+                    <p className="text-xs text-muted font-sans leading-relaxed mb-4">
                       {cap.desc}
                     </p>
                   </div>
@@ -410,17 +454,17 @@ export const SuperFlowWelcomeView: React.FC = () => {
               ))}
             </div>
 
-            {/* Sample Ready-to-Run Prompts Bar */}
-            <div className="mt-5 pt-4 border-t border-border-warm/40">
-              <span className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block mb-2">
-                Quick Prompts for Autonomous Execution:
+            {/* Interactive Quick Prompts */}
+            <div className="mt-5 pt-4 border-t border-border-warm/50">
+              <span className="text-xs font-display font-bold text-ink block mb-2">
+                Prompt Suggestions & Fast Starters:
               </span>
               <div className="flex flex-wrap gap-2">
                 {[
                   'Compile C / C++ Algorithm',
                   'Run Rust Memory Safety Check',
-                  'Deploy Browser Subagent for Web Crawling',
-                  'Train SuperFlow Foundation Model',
+                  'Ask Claude 3.7 to Refactor Function',
+                  'DeepSeek-R1 Math Reasoning',
                 ].map((prompt) => (
                   <button
                     key={prompt}
@@ -430,6 +474,8 @@ export const SuperFlowWelcomeView: React.FC = () => {
                         handleOpenCompilerWithLang('c')
                       } else if (prompt.includes('Rust')) {
                         handleOpenCompilerWithLang('rust')
+                      } else if (prompt.includes('Claude 3.7') || prompt.includes('DeepSeek-R1')) {
+                        setIsVirtualAIModalOpen(true)
                       } else {
                         setProjectName(prompt.toLowerCase().replace(/\s+/g, '-'))
                         setStage('workshop')
@@ -437,29 +483,39 @@ export const SuperFlowWelcomeView: React.FC = () => {
                     }}
                     className="px-2.5 py-1 rounded-lg bg-surface border border-border-warm text-[11px] text-muted hover:text-ink hover:border-gold/50 transition-all cursor-pointer"
                   >
-                    ⚡ {prompt}
+                    💡 {prompt}
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Engine Architecture Summary Bar */}
+          {/* Engine Health Status Banner */}
           <div className="p-4 rounded-xl border border-gold/30 bg-gold/5 flex items-center justify-between text-xs font-sans text-muted">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <span className="text-foreground/90 font-medium">Polyglot Engine Connected:</span>
-              <span className="font-mono text-[11px]">GCC 16.1.0 • rustc 1.97 • Python 3.14 • JDK 21 Ready</span>
+              <span className="text-foreground/90 font-medium">Virtual AI & Polyglot Engine:</span>
+              <span className="font-mono text-[11px]">33 Languages • 13 Virtual AI Models Active</span>
             </div>
             <button
-              onClick={() => handleOpenCompilerWithLang('python')}
+              onClick={() => setIsVirtualAIModalOpen(true)}
               className="text-gold hover:underline cursor-pointer font-medium"
             >
-              Open Compiler →
+              Configure Virtual AI →
             </button>
           </div>
         </div>
       </div>
+
+      {/* Virtual AI Hub Modal */}
+      <VirtualAIModelHubModal
+        isOpen={isVirtualAIModalOpen}
+        onClose={() => setIsVirtualAIModalOpen(false)}
+        onSelectModel={(modelId) => {
+          setActiveVirtualModelId(modelId)
+          playPluck('F4')
+        }}
+      />
     </div>
   )
 }
