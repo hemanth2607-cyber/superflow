@@ -45,7 +45,6 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
     torsoTilt: 0,
     torsoY: 0,
     skirt: 0,
-    legs: 0,
     sway: 0,
   })
 
@@ -81,10 +80,10 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
       // 1. Head: independent gentle nod and tilt
       const head = (Math.sin(elapsed * 0.9) * 1.8 + Math.cos(elapsed * 1.4) * 0.7) * gestureBoost
 
-      // 2. Left Arm: independent shoulder articulation & weapon/sleeve motion
+      // 2. Left Arm: independent shoulder articulation & hand motion
       const leftArm = (Math.sin(elapsed * 1.1 + 0.5) * 2.5 + Math.cos(elapsed * 0.6) * 0.8) * gestureBoost
 
-      // 3. Right Arm: independent shoulder articulation & shield/fan motion
+      // 3. Right Arm: independent shoulder articulation & hand motion
       const rightArm = (Math.sin(elapsed * 1.0 + 1.8) * 2.6 - Math.cos(elapsed * 0.7) * 0.7) * gestureBoost
 
       // 4. Torso: subtle core breathing rise/fall and gentle tilt
@@ -94,10 +93,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
       // 5. Skirt / Robe: pendular inertia lagging behind torso
       const skirt = (Math.sin(elapsed * 0.7 + 2.1) * 1.6) * gestureBoost
 
-      // 6. Legs / Feet: subtle independent counter-balance articulation
-      const legs = (Math.sin(elapsed * 0.85 + 3.2) * 1.3) * gestureBoost
-
-      // 7. Overall gentle marionette string suspension sway
+      // 6. Overall gentle marionette string suspension sway
       const sway = Math.sin(elapsed * 0.55) * 0.6
 
       setAngles({
@@ -107,7 +103,6 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
         torsoTilt,
         torsoY,
         skirt,
-        legs,
         sway,
       })
 
@@ -118,123 +113,119 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
     return () => cancelAnimationFrame(animId)
   }, [isGesturing])
 
-  // Configuration for each puppet with 6 distinct body parts, pivots, and threads
+  // Configuration for each art-styled puppet with authentic pivots & synchronized threads
   const config = isChinese
     ? {
-        aspectRatio: '896 / 1200',
-        headSrc: '/assets/shadow/part_head.png',
-        leftArmSrc: '/assets/shadow/part_left_arm.png',
-        rightArmSrc: '/assets/shadow/part_right_arm.png',
+        aspectRatio: '657 / 992',
         torsoSrc: '/assets/shadow/part_torso.png',
         skirtSrc: '/assets/shadow/part_skirt.png',
-        legsSrc: '/assets/shadow/part_legs.png',
+        leftArmSrc: '/assets/shadow/part_left_arm.png',
+        rightArmSrc: '/assets/shadow/part_right_arm.png',
+        headSrc: '/assets/shadow/part_head.png',
         pivots: {
-          head: { x: 51.3, y: 28.8 },
-          leftArm: { x: 43.0, y: 32.9 },
-          rightArm: { x: 59.7, y: 32.9 },
-          torso: { x: 51.3, y: 38.3 },
-          skirt: { x: 51.3, y: 45.4 },
-          legs: { x: 51.3, y: 64.2 },
+          head: { x: 54.8, y: 23.7 },
+          leftArm: { x: 47.2, y: 25.7 },
+          rightArm: { x: 66.2, y: 25.7 },
+          torso: { x: 56.3, y: 35.3 },
+          skirt: { x: 56.3, y: 47.4 },
         },
         // Overhead suspension threads: Attached above crown and to arms, NEVER crossing face
         threads: [
-          // Head thread attaches to top of crown (y=9.2%), well above face
+          // Head thread attaches to top of crown (y=4.0%), well above face
           {
             id: 'head',
-            barX: 51.3,
-            barY: 3.0,
-            attachX: 51.3,
-            attachY: 9.2,
-            pivot: { x: 51.3, y: 28.8 },
+            barX: 55.0,
+            barY: 3.5,
+            attachX: 54.8,
+            attachY: 4.0,
+            pivot: { x: 54.8, y: 23.7 },
             angleKey: 'head' as const,
           },
-          // Left arm thread attaches to spear shaft
-          {
-            id: 'leftArm',
-            barX: 25.0,
-            barY: 3.0,
-            attachX: 27.9,
-            attachY: 40.0,
-            pivot: { x: 43.0, y: 32.9 },
-            angleKey: 'leftArm' as const,
-          },
-          // Right arm thread attaches to top rim of dragon shield
+          // Right arm thread attaches to right hand
           {
             id: 'rightArm',
-            barX: 78.0,
-            barY: 3.0,
-            attachX: 82.6,
-            attachY: 40.0,
-            pivot: { x: 59.7, y: 32.9 },
+            barX: 75.0,
+            barY: 3.5,
+            attachX: 77.0,
+            attachY: 17.5,
+            pivot: { x: 66.2, y: 25.7 },
             angleKey: 'rightArm' as const,
           },
-          // Torso thread attaches to shoulder cross-beam
+          // Left arm thread attaches to left hand
           {
-            id: 'torso',
-            barX: 45.0,
-            barY: 3.0,
-            attachX: 47.0,
-            attachY: 26.0,
-            pivot: { x: 51.3, y: 38.3 },
+            id: 'leftArm',
+            barX: 27.0,
+            barY: 3.5,
+            attachX: 24.5,
+            attachY: 42.0,
+            pivot: { x: 47.2, y: 25.7 },
+            angleKey: 'leftArm' as const,
+          },
+          // Torso thread attaches to waist anchor
+          {
+            id: 'waist',
+            barX: 46.0,
+            barY: 3.5,
+            attachX: 56.3,
+            attachY: 40.0,
+            pivot: { x: 56.3, y: 35.3 },
             angleKey: 'torsoTilt' as const,
           },
         ],
       }
     : {
-        aspectRatio: '896 / 1200',
-        headSrc: '/assets/shadow/jp_part_head.png',
-        leftArmSrc: '/assets/shadow/jp_part_left_arm.png',
-        rightArmSrc: '/assets/shadow/jp_part_right_arm.png',
+        aspectRatio: '620 / 1085',
         torsoSrc: '/assets/shadow/jp_part_torso.png',
         skirtSrc: '/assets/shadow/jp_part_skirt.png',
-        legsSrc: '/assets/shadow/jp_part_feet.png',
+        leftArmSrc: '/assets/shadow/jp_part_left_arm.png',
+        rightArmSrc: '/assets/shadow/jp_part_right_arm.png',
+        headSrc: '/assets/shadow/jp_part_head.png',
         pivots: {
-          head: { x: 50.0, y: 21.3 },
-          rightArm: { x: 40.2, y: 22.9 },
-          leftArm: { x: 59.2, y: 22.9 },
-          torso: { x: 50.0, y: 31.7 },
-          skirt: { x: 50.0, y: 43.3 },
-          legs: { x: 50.8, y: 73.3 },
+          head: { x: 52.0, y: 18.0 },
+          leftArm: { x: 32.0, y: 28.0 },
+          rightArm: { x: 68.0, y: 25.0 },
+          torso: { x: 52.0, y: 35.0 },
+          skirt: { x: 52.0, y: 48.0 },
         },
         threads: [
-          // Head thread attaches to top hair ornament (y=5.4%), well above face
+          // Head thread attaches to top hair ornament (y=5.0%), well above face
           {
             id: 'head',
-            barX: 50.0,
-            barY: 3.0,
-            attachX: 50.0,
-            attachY: 5.4,
-            pivot: { x: 50.0, y: 21.3 },
+            barX: 52.0,
+            barY: 3.5,
+            attachX: 52.0,
+            attachY: 5.0,
+            pivot: { x: 52.0, y: 18.0 },
             angleKey: 'head' as const,
           },
-          // Right arm thread attaches to the gold fan edge
+          // Right arm thread attaches to right hand
           {
             id: 'rightArm',
-            barX: 24.0,
-            barY: 3.0,
-            attachX: 23.0,
-            attachY: 42.0,
-            pivot: { x: 40.2, y: 22.9 },
+            barX: 76.0,
+            barY: 3.5,
+            attachX: 78.0,
+            attachY: 22.0,
+            pivot: { x: 68.0, y: 25.0 },
             angleKey: 'rightArm' as const,
           },
-          // Left arm thread attaches to raised silk cloth
+          // Left arm thread attaches to left hand
           {
             id: 'leftArm',
-            barX: 76.0,
-            barY: 3.0,
-            attachX: 77.0,
-            attachY: 26.0,
-            pivot: { x: 59.2, y: 22.9 },
+            barX: 25.0,
+            barY: 3.5,
+            attachX: 24.0,
+            attachY: 34.0,
+            pivot: { x: 32.0, y: 28.0 },
             angleKey: 'leftArm' as const,
           },
-          // Torso thread attaches to shoulder collar
+          // Torso thread attaches to waist anchor
           {
-            id: 'torso',
+            id: 'waist',
             barX: 44.0,
-            barY: 3.0,
-            attachX: 44.0,
-            attachY: 20.0,
-            pivot: { x: 50.0, y: 31.7 },
+            barY: 3.5,
+            attachX: 52.0,
+            attachY: 40.0,
+            pivot: { x: 52.0, y: 35.0 },
             angleKey: 'torsoTilt' as const,
           },
         ],
@@ -243,10 +234,10 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-[320px] md:h-[370px] select-none pointer-events-none flex flex-col items-center justify-center filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.55)] ${className}`}
+      className={`relative w-full h-[300px] md:h-[350px] select-none pointer-events-none flex flex-col items-center justify-center filter drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] ${className}`}
       style={{
         transform: `rotate(${angles.sway}deg) translateY(${angles.torsoY}px)`,
-        transformOrigin: '50% 3.0%',
+        transformOrigin: '50% 3.5%',
         transition: 'transform 0.15s ease-out',
       }}
     >
@@ -261,7 +252,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           className="w-full h-full overflow-visible"
         >
           <defs>
-            {/* Luminous Silk Thread Glow */}
+            {/* Silk Thread Golden Glow Filter */}
             <filter id={`threadGlow-${type}`} x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="0" stdDeviation="0.3" floodColor="#e6ca75" floodOpacity="0.75" />
             </filter>
@@ -336,25 +327,13 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
       </div>
 
       {/* ==============================================================
-          2. ARTICULATED SEPARATE BODY PARTS (ALL 6 PARTS MOVE SEPARATELY)
+          2. ARTICULATED SEPARATE BODY PARTS (ALL PARTS MOVE SEPARATELY)
           ============================================================== */}
       <div
         className="relative h-full overflow-visible mx-auto"
         style={{ aspectRatio: config.aspectRatio }}
       >
-        {/* Part 1: Legs & Boots / Geta (Independent balance & stride) */}
-        <img
-          src={config.legsSrc}
-          alt="Puppet Legs"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform"
-          style={{
-            transform: `rotate(${angles.legs}deg)`,
-            transformOrigin: `${config.pivots.legs.x}% ${config.pivots.legs.y}%`,
-            willChange: 'transform',
-          }}
-        />
-
-        {/* Part 2: Skirt / Lower Robe (Independent pendular inertia & sway) */}
+        {/* Layer 1: Skirt & Lower Body (Independent pendular inertia & sway) */}
         <img
           src={config.skirtSrc}
           alt="Puppet Skirt"
@@ -366,7 +345,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           }}
         />
 
-        {/* Part 3: Left Arm (Independent shoulder swing & weapon/cloth motion) */}
+        {/* Layer 2: Left Arm & Sleeve (Independent shoulder swing) */}
         <img
           src={config.leftArmSrc}
           alt="Puppet Left Arm"
@@ -378,7 +357,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           }}
         />
 
-        {/* Part 4: Torso & Chestplate / Obi (Central anchor with subtle respiratory tilt) */}
+        {/* Layer 3: Central Torso / Robe (Anchor Center with subtle breathing tilt) */}
         <img
           src={config.torsoSrc}
           alt="Puppet Torso"
@@ -390,7 +369,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           }}
         />
 
-        {/* Part 5: Right Arm (Independent shoulder swing & shield/fan motion) */}
+        {/* Layer 4: Right Arm & Fan/Sword (Independent shoulder swing) */}
         <img
           src={config.rightArmSrc}
           alt="Puppet Right Arm"
@@ -402,7 +381,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           }}
         />
 
-        {/* Part 6: Head & Crown / Headdress (Independent nod and tilt articulation) */}
+        {/* Layer 5: Head, Crown & Headdress (Independent nod and tilt) */}
         <img
           src={config.headSrc}
           alt="Puppet Head"
