@@ -6,14 +6,14 @@ const STAGE_IMAGES: Record<string, string> = {
   sakura: '/assets/shadow/shadow_cherry_blossom.jpg', // Japanese weeping sakura stage with paper moon & bridge
   bamboo: '/assets/shadow/shadow_bamboo_grove.jpg',   // Bamboo grove stage with glowing lanterns & pagoda
   wisteria: '/assets/shadow/both_puppets_theatre.jpg', // Full shadow theatre with both puppets on stage
-  camellia: '/assets/shadow/shadow_stage_background_1791025888626.jpg', // Misty mountain ink-wash stage
+  camellia: '/assets/shadow/shadow_stage_background.jpg', // Misty mountain ink-wash stage
 }
 
 const ALL_IMAGES = [
   '/assets/shadow/both_puppets_theatre.jpg',
   '/assets/shadow/shadow_cherry_blossom.jpg',
   '/assets/shadow/shadow_bamboo_grove.jpg',
-  '/assets/shadow/shadow_stage_background_1791025888626.jpg',
+  '/assets/shadow/shadow_stage_background.jpg',
 ]
 
 interface Petal {
