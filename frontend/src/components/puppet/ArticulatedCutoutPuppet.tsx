@@ -129,43 +129,43 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
         skirtSrc: '/assets/shadow/part_skirt.png',
         legsSrc: '/assets/shadow/part_legs.png',
         pivots: {
-          head: { x: 50.8, y: 30.0 },
-          leftArm: { x: 42.4, y: 30.0 },
-          rightArm: { x: 59.2, y: 30.0 },
-          torso: { x: 50.8, y: 40.0 },
-          skirt: { x: 50.8, y: 51.7 },
-          legs: { x: 50.8, y: 69.2 },
+          head: { x: 51.3, y: 28.8 },
+          leftArm: { x: 43.0, y: 32.9 },
+          rightArm: { x: 59.7, y: 32.9 },
+          torso: { x: 51.3, y: 38.3 },
+          skirt: { x: 51.3, y: 45.4 },
+          legs: { x: 51.3, y: 64.2 },
         },
         // Overhead suspension threads: Attached above crown and to arms, NEVER crossing face
         threads: [
-          // Head thread attaches to top center crown pompom (y=10.0%), well above face
+          // Head thread attaches to top of crown (y=9.2%), well above face
           {
             id: 'head',
-            barX: 50.8,
+            barX: 51.3,
             barY: 3.0,
-            attachX: 50.8,
-            attachY: 10.0,
-            pivot: { x: 50.8, y: 30.0 },
+            attachX: 51.3,
+            attachY: 9.2,
+            pivot: { x: 51.3, y: 28.8 },
             angleKey: 'head' as const,
           },
-          // Left arm thread attaches to spear shaft near hand
+          // Left arm thread attaches to spear shaft
           {
             id: 'leftArm',
             barX: 25.0,
             barY: 3.0,
-            attachX: 30.1,
-            attachY: 46.7,
-            pivot: { x: 42.4, y: 30.0 },
+            attachX: 27.9,
+            attachY: 40.0,
+            pivot: { x: 43.0, y: 32.9 },
             angleKey: 'leftArm' as const,
           },
-          // Right arm thread attaches to top of tiger shield
+          // Right arm thread attaches to top rim of dragon shield
           {
             id: 'rightArm',
-            barX: 76.0,
+            barX: 78.0,
             barY: 3.0,
-            attachX: 76.0,
-            attachY: 35.0,
-            pivot: { x: 59.2, y: 30.0 },
+            attachX: 82.6,
+            attachY: 40.0,
+            pivot: { x: 59.7, y: 32.9 },
             angleKey: 'rightArm' as const,
           },
           // Torso thread attaches to shoulder cross-beam
@@ -173,9 +173,9 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
             id: 'torso',
             barX: 45.0,
             barY: 3.0,
-            attachX: 45.0,
-            attachY: 22.0,
-            pivot: { x: 50.8, y: 40.0 },
+            attachX: 47.0,
+            attachY: 26.0,
+            pivot: { x: 51.3, y: 38.3 },
             angleKey: 'torsoTilt' as const,
           },
         ],
@@ -342,7 +342,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
         className="relative h-full overflow-visible mx-auto"
         style={{ aspectRatio: config.aspectRatio }}
       >
-        {/* Part 1: Legs & Platform Boots / Geta (Independent balance & stride) */}
+        {/* Part 1: Legs & Boots / Geta (Independent balance & stride) */}
         <img
           src={config.legsSrc}
           alt="Puppet Legs"
@@ -378,7 +378,7 @@ export const ArticulatedCutoutPuppet: React.FC<ArticulatedCutoutPuppetProps> = (
           }}
         />
 
-        {/* Part 4: Torso & Kaokui Flags / Obi (Central anchor with subtle respiratory tilt) */}
+        {/* Part 4: Torso & Chestplate / Obi (Central anchor with subtle respiratory tilt) */}
         <img
           src={config.torsoSrc}
           alt="Puppet Torso"
