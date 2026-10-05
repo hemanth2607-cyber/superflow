@@ -3,10 +3,11 @@ import { StageHeader } from './components/ui/StageHeader'
 import { AtmosphereBackground } from './components/ui/AtmosphereBackground'
 import { Curtain } from './components/ui/Curtain'
 import { StageCanvas } from './components/3d/StageCanvas'
-import { OvertureView } from './components/overture/OvertureView'
+import { SuperFlowWelcomeView } from './components/overture/SuperFlowWelcomeView'
 import { CastingView } from './components/casting/CastingView'
 import { WorkshopView } from './components/workshop/WorkshopView'
 import { PremiereView } from './components/premiere/PremiereView'
+import { DancingWomanLoadingScreen } from './components/ui/DancingWomanLoadingScreen'
 import { useFlowStore } from './stores/useFlowStore'
 import { useThemeStore } from './stores/useThemeStore'
 
@@ -15,41 +16,59 @@ export const App: React.FC = () => {
   const { theme } = useThemeStore()
   const [curtainOpen, setCurtainOpen] = useState(false)
 
-  // Open the curtain after initial mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  // Dancing woman loading screen active on app startup
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Open the stage curtain when loading finishes
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+    setTimeout(() => {
       setCurtainOpen(true)
-    }, 600)
-    return () => clearTimeout(timer)
-  }, [])
+    }, 200)
+  }
 
   return (
     <div className={`relative min-h-screen flex flex-col font-sans transition-colors duration-500 ${theme === 'dark' ? 'dark' : ''}`}>
-      {/* 1. Stage Velvet/Washi Curtain */}
+      {/* 1. Dancing Woman Theatrical Loading Page (Turns both directions, shakes & dances) */}
+      {isLoading && (
+        <DancingWomanLoadingScreen onComplete={handleLoadingComplete} />
+      )}
+
+      {/* 2. Stage Velvet/Washi Curtain */}
       <Curtain isOpen={curtainOpen} />
 
-      {/* 2. Parallax Atmospheric Background with 4 Photos, Bamboo & Petals */}
+      {/* 3. Parallax Atmospheric Background with 4 Stages */}
       <AtmosphereBackground />
 
-      {/* 3. Stage Header & Navigation Controls */}
+      {/* 4. Stage Header & Navigation Controls */}
       <StageHeader />
 
-      {/* 4. Puppet Marionette Theatre (3D R3F Rig with 2D SVG Fallback) */}
-      <div className="relative z-10 w-full pt-2">
+      {/* 5. 4-Character Puppet Marionette Theatre Stage */}
+      <div className="relative z-10 w-full pt-1">
         <StageCanvas />
       </div>
 
-      {/* 5. Dynamic Experience Flow Stages */}
+      {/* 6. Dynamic Experience Flow Stages: Defaults to SuperFlow Welcome Page */}
       <main className="relative z-20 flex-1 flex flex-col justify-center pb-12">
-        {stage === 'overture' && <OvertureView />}
+        {stage === 'overture' && <SuperFlowWelcomeView />}
         {stage === 'casting' && <CastingView />}
         {stage === 'workshop' && <WorkshopView />}
         {stage === 'premiere' && <PremiereView />}
       </main>
 
-      {/* 6. Ground Footer */}
-      <footer className="relative z-20 py-4 text-center text-xs text-muted/70 font-sans border-t border-border-warm/40">
-        <span>SuperFlow • Intelligent Guided Project Starter</span>
+      {/* 7. Ground Footer with Loading Replay Button */}
+      <footer className="relative z-20 py-3 text-center text-xs text-muted/70 font-sans border-t border-border-warm/40 flex items-center justify-between px-6">
+        <span>SuperFlow • Intelligent Agent Engine & Marionette Theatre</span>
+        <button
+          onClick={() => {
+            setCurtainOpen(false)
+            setIsLoading(true)
+          }}
+          className="text-[11px] text-gold/80 hover:text-gold hover:underline cursor-pointer flex items-center gap-1"
+        >
+          <span>Replay Loading Dance</span>
+          <span>↺</span>
+        </button>
       </footer>
     </div>
   )
