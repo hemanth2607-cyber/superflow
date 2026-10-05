@@ -16,7 +16,7 @@ export const App: React.FC = () => {
   const { theme } = useThemeStore()
   const [curtainOpen, setCurtainOpen] = useState(false)
 
-  // Dancing woman loading screen active on app startup
+  // Theatrical dancing woman loading screen on app startup
   const [isLoading, setIsLoading] = useState(true)
 
   // Open the stage curtain when loading finishes
@@ -27,9 +27,14 @@ export const App: React.FC = () => {
     }, 200)
   }
 
+  // The user explicitly requested:
+  // "in there i should see only the entry page and not the dolls when i enter the page"
+  // So puppets/dolls are hidden on the 'overture' (welcome/entry) stage!
+  const showDollsOnStage = stage !== 'overture'
+
   return (
     <div className={`relative min-h-screen flex flex-col font-sans transition-colors duration-500 ${theme === 'dark' ? 'dark' : ''}`}>
-      {/* 1. Dancing Woman Theatrical Loading Page (Turns both directions, shakes & dances) */}
+      {/* 1. Dancing Woman Theatrical Loading Page (Black background, dancing in both directions, turns & shakes) */}
       {isLoading && (
         <DancingWomanLoadingScreen onComplete={handleLoadingComplete} />
       )}
@@ -37,18 +42,20 @@ export const App: React.FC = () => {
       {/* 2. Stage Velvet/Washi Curtain */}
       <Curtain isOpen={curtainOpen} />
 
-      {/* 3. Parallax Atmospheric Background with 4 Stages */}
+      {/* 3. Parallax Atmospheric Background */}
       <AtmosphereBackground />
 
       {/* 4. Stage Header & Navigation Controls */}
       <StageHeader />
 
-      {/* 5. 4-Character Puppet Marionette Theatre Stage */}
-      <div className="relative z-10 w-full pt-1">
-        <StageCanvas />
-      </div>
+      {/* 5. Puppet Marionette Theatre (Hidden on entry page per user instruction; visible in workshop/premiere) */}
+      {showDollsOnStage && (
+        <div className="relative z-10 w-full pt-1">
+          <StageCanvas />
+        </div>
+      )}
 
-      {/* 6. Dynamic Experience Flow Stages: Defaults to SuperFlow Welcome Page */}
+      {/* 6. Dynamic Experience Flow Stages: Clean SuperFlow Entry Page without dolls */}
       <main className="relative z-20 flex-1 flex flex-col justify-center pb-12">
         {stage === 'overture' && <SuperFlowWelcomeView />}
         {stage === 'casting' && <CastingView />}
@@ -58,7 +65,7 @@ export const App: React.FC = () => {
 
       {/* 7. Ground Footer with Loading Replay Button */}
       <footer className="relative z-20 py-3 text-center text-xs text-muted/70 font-sans border-t border-border-warm/40 flex items-center justify-between px-6">
-        <span>SuperFlow • Intelligent Agent Engine & Marionette Theatre</span>
+        <span>SuperFlow • Intelligent Agent Engine & Workflow Starter</span>
         <button
           onClick={() => {
             setCurtainOpen(false)
