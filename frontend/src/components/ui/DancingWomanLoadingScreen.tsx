@@ -4,7 +4,7 @@ interface DancingWomanLoadingScreenProps {
   onComplete: () => void
 }
 
-// Exact 2D forward-kinematics rotation around a pivot point
+// 2D forward-kinematics rotation helper
 function rotatePoint(
   x: number,
   y: number,
@@ -26,14 +26,12 @@ function rotatePoint(
 export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps> = ({
   onComplete,
 }) => {
-  const [progress, setProgress] = useState(0)
-  const [statusText, setStatusText] = useState('Lighting the stage...')
   const [isFadingOut, setIsFadingOut] = useState(false)
+  const [loadingStage, setLoadingStage] = useState('Loading assets & stage...')
 
-  // Real-time animation clock
+  // Real-time animation clock for 60fps smooth physics
   const [time, setTime] = useState(0)
 
-  // Smooth continuous 60fps loop for dance physics
   useEffect(() => {
     let animId: number
     const startTime = performance.now()
@@ -48,130 +46,189 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
     return () => cancelAnimationFrame(animId)
   }, [])
 
-  // Progress timer (~3.5 seconds total)
+  // ==============================================================
+  // REAL BROWSER ASSET & WINDOW LOAD DETECTION
+  // (No fake timer, no manual "Enter App" button, automatically fades out
+  //  instantly when assets, fonts, and window load events complete)
+  // ==============================================================
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + 1.15
-        if (next >= 100) {
-          clearInterval(interval)
-          setStatusText('Welcome to SuperFlow')
-          setTimeout(() => {
-            setIsFadingOut(true)
-            setTimeout(onComplete, 500)
-          }, 350)
-          return 100
-        }
+    let isMounted = true
+    let isDone = false
 
-        if (next > 75) {
-          setStatusText('Starting Polyglot Studio & AI Hub...')
-        } else if (next > 50) {
-          setStatusText('Tuning marionette silk threads...')
-        } else if (next > 25) {
-          setStatusText('The maiden dances on the shadow stage...')
-        }
-        return next
-      })
-    }, 40)
+    const triggerCompletion = () => {
+      if (isDone || !isMounted) return
+      isDone = true
+      setLoadingStage('Welcome to SuperFlow')
+      setIsFadingOut(true)
+      setTimeout(() => {
+        if (isMounted) onComplete()
+      }, 550) // Smooth 550ms fade-out transition
+    }
 
-    return () => clearInterval(interval)
+    // 1. Critical assets to verify fully loaded in browser cache
+    const assetsToPreload = [
+      '/assets/shadow/puppet_head_clean.png',
+      '/assets/shadow/puppet_torso_clean.png',
+      '/assets/shadow/puppet_left_arm_clean.png',
+      '/assets/shadow/puppet_right_arm_clean.png',
+      '/assets/shadow/puppet_skirt_clean.png',
+    ]
+
+    let loadedCount = 0
+    const checkAllFinished = () => {
+      const isDocReady = document.readyState === 'complete'
+      const areAssetsReady = loadedCount >= assetsToPreload.length
+
+      if (isDocReady && areAssetsReady) {
+        // Minimum aesthetic flourish of ~1.2s so the dance isn't a jarring flicker
+        const elapsed = performance.now() - initTime
+        const remaining = Math.max(0, 1200 - elapsed)
+        setTimeout(triggerCompletion, remaining)
+      }
+    }
+
+    const initTime = performance.now()
+
+    // Preload each clean puppet part image
+    assetsToPreload.forEach((src) => {
+      const img = new Image()
+      img.src = src
+      img.onload = () => {
+        loadedCount++
+        setLoadingStage('Assembling marionette...')
+        checkAllFinished()
+      }
+      img.onerror = () => {
+        loadedCount++
+        checkAllFinished()
+      }
+    })
+
+    // 2. Listen to actual window load & readyState change events
+    if (document.readyState === 'complete') {
+      checkAllFinished()
+    } else {
+      const onWindowLoad = () => {
+        setLoadingStage('Starting Polyglot Studio & AI Hub...')
+        checkAllFinished()
+      }
+      window.addEventListener('load', onWindowLoad)
+      document.addEventListener('readystatechange', checkAllFinished)
+    }
+
+    // 3. Document fonts ready promise
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(() => checkAllFinished()).catch(() => {})
+    }
+
+    // 4. Safety maximum watchdog (ensures app opens even on slow network)
+    const watchdog = setTimeout(() => {
+      triggerCompletion()
+    }, 3800)
+
+    return () => {
+      isMounted = false
+      clearTimeout(watchdog)
+      window.removeEventListener('load', checkAllFinished)
+      document.removeEventListener('readystatechange', checkAllFinished)
+    }
   }, [onComplete])
 
   // ==============================================================
-  // GRACEFUL, ELEGANT CLASSICAL DANCE CHOREOGRAPHY
-  // (Pure 2D, NO 3D card turning, each part dances in smooth musical harmony)
+  // LIVELY, RHYTHMIC CLASSICAL MARIONETTE DANCE
+  // (Faster, energetic tempo = 2.5 rad/s, fluid sine wave kinematics)
   // ==============================================================
-  const danceTempo = 1.6 // Calibrated slow traditional court tempo
+  const danceTempo = 2.5 // Lively, rhythmic dance tempo
 
-  // 1. Weightless Vertical Float & Bob (Gentle sinusoidal suspension, NO harsh triangular bounces)
-  const danceFloatY = Math.sin(time * danceTempo) * 7.0
+  // 1. Weightless Vertical Float & Bob
+  const danceFloatY = Math.sin(time * danceTempo) * 7.5
 
-  // 2. Skirt & Legs: Elegant, rhythmic flowing hem sway as weight shifts softly
-  const skirtAngle = Math.sin(time * danceTempo + 0.6) * 5.5 + Math.cos(time * 0.8) * 2.5
+  // 2. Skirt & Kimono Hem: Lively rhythmic sway with weight transfer
+  const skirtAngle = Math.sin(time * danceTempo + 0.6) * 7.5 + Math.cos(time * 1.3) * 3.0
 
-  // 3. Left Arm: Poetic wave of the kimono sleeve (stays flawlessly seated in shoulder)
-  const leftArmAngle = Math.sin(time * danceTempo + 1.2) * 8.5 + Math.cos(time * 0.8 + 0.5) * 3.5
+  // 3. Left Arm: Graceful wide sweeping wave of the kimono sleeve
+  const leftArmAngle = Math.sin(time * danceTempo + 1.2) * 11.5 + Math.cos(time * 1.4) * 4.5
 
-  // 4. Right Arm: Exquisite fan flutter and gentle gliding arc
-  const rightArmAngle = Math.cos(time * danceTempo + 1.7) * 9.5 + Math.sin(time * 0.8 + 0.8) * 4.0
+  // 4. Right Arm with Golden Fan: Lively fluttering fan and expressive lift
+  const rightArmAngle = Math.cos(time * danceTempo + 1.8) * 13.5 + Math.sin(time * 1.5) * 5.5
 
-  // 5. Torso: Subtle natural breathing rise and soft posture tilt
-  const torsoTilt = Math.sin(time * danceTempo + 0.3) * 2.8
-  const torsoY = Math.sin(time * danceTempo) * 2.0
+  // 5. Torso: Expressive posture breathing and musical sway
+  const torsoTilt = Math.sin(time * danceTempo + 0.3) * 3.2
+  const torsoY = Math.sin(time * danceTempo) * 2.2
 
-  // 6. Head: Graceful regal nods and tilts following the dance phrasing
-  const headAngle = Math.sin(time * danceTempo) * 4.2 + Math.cos(time * 0.8) * 2.0
+  // 6. Head: Expressive royal nods and tilts following the fan
+  const headAngle = Math.sin(time * danceTempo) * 5.2 + Math.cos(time * 1.3) * 2.5
 
-  // 7. Whole Marionette Sway: Soft, serene pendulum drift suspended from threads above
-  const marionetteSway = Math.sin(time * 0.9) * 1.5
+  // 7. Whole Marionette Sway
+  const marionetteSway = Math.sin(time * 1.2) * 1.8
 
   // ==============================================================
-  // REALISTIC EXTENDED SILK THREADS (OUT OF SCREEN, NO WOODEN STICKS!)
+  // GOLDEN SILK STRINGS EXTENDING OUT OF SCREEN (NO STICK, NO CROSSBAR)
+  // Strings attach cleanly to hairpins (NOT cutting through face!), wrists & fan
+  // Coordinates mapped in 100x100 relative stage space
   // ==============================================================
-  const pivots = {
-    head: { x: 52.0, y: 18.0 },
-    leftArm: { x: 32.0, y: 28.0 },
-    rightArm: { x: 68.0, y: 25.0 },
-    torso: { x: 52.0, y: 35.0 },
-  }
+  // Pivots in stage %
+  const headPivot = { x: 50.0, y: 19.0 }
+  const leftArmPivot = { x: 42.5, y: 31.0 }
+  const rightArmPivot = { x: 60.0, y: 29.5 }
+  const torsoPivot = { x: 50.0, y: 38.0 }
 
-  // Calculate dynamic bottom endpoints based on real body part rotation
-  const headAttach = rotatePoint(52.0, 5.0, pivots.head.x, pivots.head.y, headAngle)
-  const leftArmAttach = rotatePoint(23.0, 35.0, pivots.leftArm.x, pivots.leftArm.y, leftArmAngle)
-  const rightArmAttach = rotatePoint(79.0, 21.0, pivots.rightArm.x, pivots.rightArm.y, rightArmAngle)
-  const waistAttach = rotatePoint(52.0, 42.0, pivots.torso.x, pivots.torso.y, torsoTilt)
+  // Dynamic attachment points calculated via rotation
+  // 1. Head string attaches to the TOP of the kanzashi hair comb (y = 5.5), NOT the face!
+  const headAttach = rotatePoint(50.0, 5.5, headPivot.x, headPivot.y, headAngle)
+  // 2. Left arm string attaches to delicate hand / sleeve edge
+  const leftArmAttach = rotatePoint(20.0, 36.0, leftArmPivot.x, leftArmPivot.y, leftArmAngle)
+  // 3. Right arm string attaches to golden fan
+  const rightArmAttach = rotatePoint(78.0, 24.0, rightArmPivot.x, rightArmPivot.y, rightArmAngle)
+  // 4. Waist / obi sash string
+  const waistAttach = rotatePoint(50.5, 43.0, torsoPivot.x, torsoPivot.y, torsoTilt)
 
-  // Threads originate FAR ABOVE THE TOP OF THE SCREEN (barY = -85)
-  // Extending out of view into the darkness above (NO STICK!)
   const threadDefinitions = [
     {
-      id: 'head',
-      barX: 51.0,
-      barY: -85.0, // Extends far above the screen
+      id: 'head-crown',
+      barX: 50.0,
+      barY: -85.0, // Extends far out of top screen edge into black space
       endX: headAttach.x,
       endY: headAttach.y,
       phase: 0.0,
-      sagAmount: 3.5,
+      sagAmount: 2.5,
     },
     {
-      id: 'leftArm',
-      barX: 26.0,
-      barY: -85.0, // Extends far above the screen
+      id: 'left-sleeve',
+      barX: 24.0,
+      barY: -85.0,
       endX: leftArmAttach.x,
       endY: leftArmAttach.y,
-      phase: 1.5,
-      sagAmount: 5.5,
+      phase: 1.4,
+      sagAmount: 4.5,
     },
     {
-      id: 'rightArm',
-      barX: 75.0,
-      barY: -85.0, // Extends far above the screen
+      id: 'right-fan',
+      barX: 76.0,
+      barY: -85.0,
       endX: rightArmAttach.x,
       endY: rightArmAttach.y,
-      phase: 3.0,
-      sagAmount: 6.0,
+      phase: 2.8,
+      sagAmount: 5.0,
     },
     {
-      id: 'waist',
-      barX: 56.0,
-      barY: -85.0, // Extends far above the screen
+      id: 'waist-sash',
+      barX: 52.0,
+      barY: -85.0,
       endX: waistAttach.x,
       endY: waistAttach.y,
-      phase: 4.5,
-      sagAmount: 3.0,
+      phase: 4.2,
+      sagAmount: 2.8,
     },
   ]
 
-  // Generate smooth, flowing, flexible silk catenary curves
+  // Flowing silk curves with harmonic wave resonance
   const threadPaths = threadDefinitions.map((t) => {
     const dx = t.endX - t.barX
     const dy = t.endY - t.barY
 
-    // Harmonic wave ripple that travels along the silk thread as limbs dance
-    const wave1 = Math.sin(time * 2.4 + t.phase) * 1.5
-    const wave2 = Math.cos(time * 3.2 + t.phase * 1.2) * 1.2
-
-    // Dynamic gravity droop
+    const wave1 = Math.sin(time * 3.2 + t.phase) * 1.5
+    const wave2 = Math.cos(time * 4.0 + t.phase * 1.2) * 1.2
     const gravitySag = t.sagAmount + Math.sin(time * danceTempo + t.phase) * 1.5
 
     const cp1x = t.barX + dx * 0.35 + wave1
@@ -187,78 +244,73 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between bg-black select-none transition-opacity duration-700 overflow-hidden ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between bg-black select-none transition-opacity duration-600 overflow-hidden pointer-events-auto ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
-      {/* 1. Subtle Golden Stage Spotlight on Pure Black Background */}
+      {/* 1. Golden Atmospheric Spotlight on Black Canvas */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Overhead soft golden spotlight cone */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[340px] md:w-[480px] h-[650px] bg-gradient-to-b from-amber-500/15 via-gold/5 to-transparent blur-3xl opacity-75"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[340px] md:w-[500px] h-[700px] bg-gradient-to-b from-amber-500/20 via-gold/8 to-transparent blur-3xl opacity-80"
           style={{
-            transform: `translateX(-50%) rotate(${Math.sin(time * 0.6) * 1.5}deg)`,
+            transform: `translateX(-50%) rotate(${Math.sin(time * 0.8) * 2.0}deg)`,
             transformOrigin: 'top center',
           }}
         />
-        {/* Stage floor pool of light */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-64 md:w-80 h-16 rounded-full bg-gold/15 blur-2xl" />
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-72 md:w-96 h-16 rounded-full bg-gold/15 blur-2xl" />
       </div>
 
-      {/* Top Brand Banner */}
+      {/* Top Header Label */}
       <div className="relative z-20 pt-8 text-center">
         <span className="text-xs uppercase tracking-[0.35em] text-gold/80 font-mono font-medium">
-          SuperFlow • Opening Ceremony
+          SuperFlow • Autonomous Polyglot Engine
         </span>
       </div>
 
-      {/* 2. THE ARTICULATED DANCING PUPPET (HANDS, LEGS, HEAD, TORSO DANCE SEPARATELY) */}
+      {/* 2. THE ARTICULATED MARIONETTE (INDIVIDUALLY GENERATED CONNECTED PARTS) */}
       <div className="relative z-20 flex flex-col items-center justify-center my-auto w-full max-w-lg">
-        {/* Marionette Stage Container */}
+        {/* Stage Container */}
         <div
-          className="relative w-72 sm:w-80 md:w-96 h-[400px] sm:h-[450px] flex items-center justify-center filter drop-shadow-[0_25px_45px_rgba(0,0,0,0.95)]"
+          className="relative w-80 sm:w-96 md:w-[420px] h-[460px] sm:h-[500px] md:h-[540px] flex items-center justify-center filter drop-shadow-[0_30px_50px_rgba(0,0,0,0.95)]"
           style={{
             transform: `rotate(${marionetteSway}deg) translateY(${danceFloatY}px)`,
             transformOrigin: '50% 10%',
-            transition: 'transform 0.05s linear',
           }}
         >
           {/* ==============================================================
-              LAYER 1: REALISTIC FLOWING SILK THREADS EXTENDING OUT OF SCREEN
-              (No stick, no bar, threads disappear into the top darkness!)
+              LAYER 1: SILK MARIONETTE THREADS (FLOWING DOWN FROM OUT OF SCREEN)
              ============================================================== */}
-          <div className="absolute inset-0 pointer-events-none z-30 overflow-visible">
+          <div className="absolute inset-0 pointer-events-none z-40 overflow-visible">
             <svg
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
               className="w-full h-full overflow-visible"
             >
               <defs>
-                <filter id="silkThreadGlow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feDropShadow dx="0" dy="0" stdDeviation="0.35" floodColor="#f4d375" floodOpacity="0.85" />
+                <filter id="silkGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="0.4" floodColor="#fbe389" floodOpacity="0.9" />
                 </filter>
               </defs>
 
-              {/* Realistic Fluid Silk Threads (Flowing from far above the screen down to limbs) */}
               {threadPaths.map((t) => (
                 <g key={t.id}>
-                  {/* Soft depth shadow behind thread */}
+                  {/* Subtle depth cast */}
                   <path
                     d={t.path}
                     fill="none"
                     stroke="#1a1005"
-                    strokeWidth="0.45"
-                    strokeOpacity="0.3"
+                    strokeWidth="0.5"
+                    strokeOpacity="0.4"
                     transform="translate(0.2, 0.3)"
                   />
-                  {/* Glowing Silk Core Thread */}
+                  {/* Glowing Silk Strand */}
                   <path
                     d={t.path}
                     fill="none"
-                    stroke="#fce99f"
-                    strokeWidth="0.25"
-                    strokeOpacity="0.9"
-                    filter="url(#silkThreadGlow)"
+                    stroke="#fff1b8"
+                    strokeWidth="0.3"
+                    strokeOpacity="0.95"
+                    filter="url(#silkGlow)"
                   />
                 </g>
               ))}
@@ -266,110 +318,114 @@ export const DancingWomanLoadingScreen: React.FC<DancingWomanLoadingScreenProps>
           </div>
 
           {/* ==============================================================
-              LAYER 2: ASSEMBLED ARTICULATED BODY PARTS DANCING SEPARATELY
+              LAYER 2: SKELETAL ASSEMBLED PUPPET PARTS
+              (Each part generated separately, seamless natural joints)
              ============================================================== */}
           <div
-            className="relative h-full overflow-visible mx-auto"
-            style={{ aspectRatio: '620 / 1085' }}
+            className="relative w-full h-full overflow-visible"
+            style={{ aspectRatio: '900 / 1000' }}
           >
-            {/* Part 1: Skirt / Legs (Sways rhythmically to the dance beat) */}
+            {/* Part 1: Left Arm & Draped Sleeve (Layered behind shoulder) */}
             <img
-              src="/assets/shadow/jp_part_skirt.png"
-              alt="Puppet Skirt & Legs"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
-              style={{
-                transform: `rotate(${skirtAngle}deg)`,
-                transformOrigin: '52% 48%',
-                transition: 'transform 0.05s linear',
-              }}
-            />
-
-            {/* Part 2: Left Arm / Kimono Sleeve (Waves gracefully with the music) */}
-            <img
-              src="/assets/shadow/jp_part_left_arm.png"
+              src="/assets/shadow/puppet_left_arm_clean.png"
               alt="Puppet Left Arm"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+              className="absolute pointer-events-none select-none z-10"
               style={{
+                left: '17.1%',
+                top: '26.5%',
+                width: '31.2%',
+                height: '28.0%',
+                objectFit: 'contain',
                 transform: `rotate(${leftArmAngle}deg)`,
-                transformOrigin: '32% 28%',
-                transition: 'transform 0.05s linear',
+                transformOrigin: '82% 16%', // Seamless shoulder socket pivot
               }}
             />
 
-            {/* Part 3: Torso (Rises and tilts with dance breathing) */}
+            {/* Part 2: Right Arm with Golden Sensu Fan (Layered behind shoulder) */}
             <img
-              src="/assets/shadow/jp_part_torso.png"
-              alt="Puppet Torso"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
-              style={{
-                transform: `rotate(${torsoTilt}deg) translateY(${torsoY}px)`,
-                transformOrigin: '52% 35%',
-                transition: 'transform 0.05s linear',
-              }}
-            />
-
-            {/* Part 4: Right Arm / Fan (Flutters and lifts the golden fan gracefully) */}
-            <img
-              src="/assets/shadow/jp_part_right_arm.png"
+              src="/assets/shadow/puppet_right_arm_clean.png"
               alt="Puppet Right Arm with Fan"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+              className="absolute pointer-events-none select-none z-10"
               style={{
+                left: '55.0%',
+                top: '21.5%',
+                width: '26.4%',
+                height: '28.0%',
+                objectFit: 'contain',
                 transform: `rotate(${rightArmAngle}deg)`,
-                transformOrigin: '68% 25%',
-                transition: 'transform 0.05s linear',
+                transformOrigin: '18% 28%', // Seamless shoulder socket pivot
               }}
             />
 
-            {/* Part 5: Head (Graceful tilts, bobs, and nods with the melody) */}
+            {/* Part 3: Skirt & Flowing Kimono Hem (Tucked under obi waist) */}
             <img
-              src="/assets/shadow/jp_part_head.png"
-              alt="Puppet Head"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+              src="/assets/shadow/puppet_skirt_clean.png"
+              alt="Puppet Skirt & Hem"
+              className="absolute pointer-events-none select-none z-20"
               style={{
+                left: '25.4%',
+                top: '35.0%',
+                width: '49.1%',
+                height: '46.0%',
+                objectFit: 'contain',
+                transform: `rotate(${skirtAngle}deg)`,
+                transformOrigin: '50% 12%', // Waist pivot under obi sash
+              }}
+            />
+
+            {/* Part 4: Torso (Kimono chest, gold brocade, obi sash) */}
+            <img
+              src="/assets/shadow/puppet_torso_clean.png"
+              alt="Puppet Torso"
+              className="absolute pointer-events-none select-none z-30"
+              style={{
+                left: '36.6%',
+                top: '25.0%',
+                width: '26.7%',
+                height: '31.0%',
+                objectFit: 'contain',
+                transform: `rotate(${torsoTilt}deg) translateY(${torsoY}px)`,
+                transformOrigin: '50% 50%',
+              }}
+            />
+
+            {/* Part 5: Head & Ornate Hairpins (Resting gracefully in V-neckline) */}
+            <img
+              src="/assets/shadow/puppet_head_clean.png"
+              alt="Puppet Head & Kanzashi Hairpins"
+              className="absolute pointer-events-none select-none z-40"
+              style={{
+                left: '37.8%',
+                top: '4.0%',
+                width: '24.4%',
+                height: '28.0%',
+                objectFit: 'contain',
                 transform: `rotate(${headAngle}deg)`,
-                transformOrigin: '52% 18%',
-                transition: 'transform 0.05s linear',
+                transformOrigin: '50% 90%', // Base of neck pivot
               }}
             />
           </div>
         </div>
 
-        {/* Dancing Puppet Caption */}
-        <div className="text-center mt-3">
+        {/* Live Subtitle */}
+        <div className="text-center mt-4">
           <span className="text-xs tracking-widest text-gold/90 font-sans font-medium flex items-center justify-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping" />
-            <span>Classical Marionette Dance</span>
+            <span>Classical Court Marionette</span>
           </span>
         </div>
       </div>
 
-      {/* 3. Theatrical Loading Progress Bar & Skip Button */}
-      <div className="relative z-30 w-full max-w-md px-6 pb-12 flex flex-col items-center">
-        {/* Status text */}
-        <div className="text-sm font-sans text-cream-light/95 mb-3 tracking-wide text-center h-6 font-medium">
-          {statusText}
+      {/* 3. Automatic Ingestion Telemetry Footer (No manual buttons) */}
+      <div className="relative z-30 w-full max-w-sm px-6 pb-10 flex flex-col items-center">
+        <div className="text-xs font-sans text-cream-light/90 mb-2.5 tracking-wide text-center h-5 font-medium flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full border border-gold border-t-transparent animate-spin" />
+          <span>{loadingStage}</span>
         </div>
 
-        {/* Golden Progress Bar Container */}
-        <div className="w-full h-2 rounded-full bg-neutral-900 border border-gold/40 p-0.5 overflow-hidden shadow-inner">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-gold-dark via-gold to-yellow-200 transition-all duration-100 shadow-[0_0_12px_rgba(212,175,55,0.8)]"
-            style={{ width: `${Math.min(progress, 100)}%` }}
-          />
-        </div>
-
-        {/* Progress percent & Skip button */}
-        <div className="w-full flex items-center justify-between text-[11px] text-muted font-sans mt-2.5">
-          <span className="tabular-nums font-mono text-gold font-medium">{Math.round(progress)}%</span>
-          <button
-            onClick={() => {
-              setIsFadingOut(true)
-              setTimeout(onComplete, 350)
-            }}
-            className="text-muted/80 hover:text-gold transition-colors underline cursor-pointer"
-          >
-            Enter SuperFlow →
-          </button>
+        {/* Dynamic Glowing Activity Line */}
+        <div className="w-full h-1 rounded-full bg-neutral-900 border border-gold/30 overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold to-transparent animate-shimmer" />
         </div>
       </div>
     </div>
